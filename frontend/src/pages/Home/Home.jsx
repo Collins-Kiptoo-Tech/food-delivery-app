@@ -8,6 +8,7 @@ import AppDownload from "../../components/AppDownload/AppDownload";
 import Blog from "../../components/Blog/Blog";
 const Home = () => {
   const [category, setCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
   return (
     <div>
       <SearchBar />

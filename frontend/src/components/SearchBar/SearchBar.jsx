@@ -1,5 +1,5 @@
 import React from "react";
-import { FaSearch } from "react-icons/fa"; // install with: npm install react-icons
+import { FaSearch } from "react-icons/fa"; // make sure react-icons is installed
 import "./SearchBar.css";
 
 const SearchBar = () => {

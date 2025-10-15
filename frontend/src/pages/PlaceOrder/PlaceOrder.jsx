@@ -24,29 +24,20 @@ const PlaceOrder = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const DELIVERY_FEE = 250;
 
   // Handle input changes
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
     setData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" })); // clear field error while typing
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   // Validate inputs
   const validate = () => {
     const newErrors = {};
-
-    // Phone validation (Kenyan format)
     const phoneRegex = /^2547\d{8}$/;
-    if (!phoneRegex.test(data.phone)) {
-      newErrors.phone = "Enter a valid phone number (e.g., 2547XXXXXXXX)";
-    }
-
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (data.email && !emailRegex.test(data.email)) {
-      newErrors.email = "Enter a valid email address";
-    }
 
     if (!data.firstName.trim()) newErrors.firstName = "First name is required";
     if (!data.lastName.trim()) newErrors.lastName = "Last name is required";
@@ -54,18 +45,21 @@ const PlaceOrder = () => {
     if (!data.city.trim()) newErrors.city = "City is required";
     if (!data.zipcode.trim()) newErrors.zipcode = "Zip code is required";
     if (!data.country.trim()) newErrors.country = "Country is required";
+    if (!phoneRegex.test(data.phone))
+      newErrors.phone = "Enter a valid phone number (e.g., 2547XXXXXXXX)";
+    if (data.email && !emailRegex.test(data.email))
+      newErrors.email = "Enter a valid email address";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Place order and send STK push
+  // Place order function (forced navigation for debugging)
   const placeOrder = async (event) => {
     event.preventDefault();
 
     if (!validate()) return;
 
-    // Build order items
     const orderItems = [];
     food_list.forEach((item) => {
       if (cartItems[item._id] > 0) {
@@ -76,7 +70,7 @@ const PlaceOrder = () => {
     const orderData = {
       address: data,
       items: orderItems,
-      amount: getTotalCartAmount() + 2,
+      amount: getTotalCartAmount() + DELIVERY_FEE,
       phone: data.phone,
     };
 
@@ -88,14 +82,21 @@ const PlaceOrder = () => {
         headers: { token },
       });
 
+      console.log("Backend response:", response.data);
+
       setLoading(false);
 
+      // FOR DEBUG: navigate no matter what the backend returns
+      navigate("/payment-completed");
+
+      // If you want to still handle backend success, uncomment below:
+      /*
       if (response.data.success) {
-        // Navigate to Payment Completed page
         navigate("/payment-completed");
       } else {
         setErrors({ form: response.data.message || "Something went wrong" });
       }
+      */
     } catch (err) {
       console.error(err);
       setLoading(false);
@@ -240,14 +241,16 @@ const PlaceOrder = () => {
             <hr />
             <div className="cart-total-details">
               <p>Delivery Fee</p>
-              <p>KES {getTotalCartAmount() === 0 ? 0 : 250}</p>
+              <p>KES {getTotalCartAmount() === 0 ? 0 : DELIVERY_FEE}</p>
             </div>
             <hr />
             <div className="cart-total-details">
               <p>Total</p>
               <b>
                 KES{" "}
-                {getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 250}
+                {getTotalCartAmount() === 0
+                  ? 0
+                  : getTotalCartAmount() + DELIVERY_FEE}
               </b>
             </div>
 

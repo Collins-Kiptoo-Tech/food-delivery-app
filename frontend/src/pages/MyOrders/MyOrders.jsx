@@ -5,48 +5,73 @@ import { assets } from "../../assets/assets";
 import axios from "axios";
 
 const MyOrders = () => {
-  const [data, setData] = useState([]);
+  const [orders, setOrders] = useState([]);
   const { url, token } = useContext(StoreContext);
 
+  // Fetch user orders
   const fetchOrders = async () => {
-    const response = await axios.post(
-      url + "/api/order/userorders",
-      {},
-      { headers: { token } }
-    );
-    setData(response.data.data);
+    try {
+      if (!token) return;
+
+      const response = await axios.post(
+        url + "/api/order/userorders",
+        {}, // no need to send userId, backend uses token
+        { headers: { token } }
+      );
+
+      console.log("Fetched orders:", response.data);
+
+      setOrders(response.data.data || []);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setOrders([]);
+    }
   };
 
   useEffect(() => {
-    if (token) {
-      fetchOrders();
-    }
+    fetchOrders();
   }, [token]);
+
+  if (!orders.length) {
+    return (
+      <div className="my-orders">
+        <h2>My Orders</h2>
+        <p>You have no orders yet.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="my-orders">
-      <h2>My orders</h2>
+      <h2>My Orders</h2>
       <div className="container">
-        {data.map((order, index) => {
+        {orders.map((order, index) => {
+          const items = order.items || [];
+          const amount = order.amount || 0;
+          const status = order.status || "Pending";
+
           return (
-            <div key={index} className="my-orders-order">
-              <img src={assets.parcel_icon} alt="" />
+            <div key={order._id || index} className="my-orders-order">
+              <img src={assets.parcel_icon} alt="Parcel" />
               <p>
-                {order.items.map((item, index) => {
-                  if (index === order.items.length - 1) {
-                    return item.name + " x " + item.quantity;
-                  } else {
-                    return item.name + " x " + item.quantity + ", ";
-                  }
-                })}
+                {items.map((item, i) => (
+                  <span key={i}>
+                    {item.name} x {item.quantity}
+                    {i < items.length - 1 ? ", " : ""}
+                  </span>
+                ))}
               </p>
-              <p>Ksh {order.amount}.00</p>
-              <p>Items: {order.items.length}</p>
+              <p>Total: Ksh {amount}.00</p>
+              <p>Items: {items.length}</p>
               <p>
-                <span>&#x25cf;</span>
-                <b>{order.status}</b>
+                <span
+                  style={{ color: status === "Pending" ? "orange" : "green" }}
+                >
+                  &#x25cf;
+                </span>{" "}
+                <b>{status}</b>
               </p>
-              <button onClick={fetchOrders}>Track Order</button>
+              <button onClick={fetchOrders}>Refresh Orders</button>
             </div>
           );
         })}

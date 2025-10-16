@@ -1,0 +1,60 @@
+.offer-banner {
+  background: linear-gradient(90deg, #ffb347, #ffcc33);
+  color: #4a2c00;
+  text-align: center;
+  padding: 40px 0; /* ⬆️ increased height */
+  position: relative;
+  width: 100%;
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  animation: fadeInDown 1s ease;
+  border: 5px solid red;
+}
+
+.offer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px; /* ⬆️ more spacing */
+  flex-wrap: wrap;
+}
+
+.offer-text {
+  font-size: 1.8rem; /* ⬆️ bigger text */
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+}
+
+.offer-text span {
+  color: #d46f00;
+  font-weight: 800;
+}
+
+.offer-icon {
+  color: #7a4b00;
+  width: 40px; /* ⬆️ bigger icons */
+  height: 40px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+

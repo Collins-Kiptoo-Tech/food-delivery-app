@@ -46,12 +46,17 @@
 }
 
 .category-image {
-  width: 140px;
-  height: 140px;
+  width: 120px;
+  height: 120px;
   object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid transparent;
   margin-bottom: 10px;
   transition: transform 0.3s;
 }
+
+/* Hover animation effect */
+
 
 /* Active category styling */
 .active-item {

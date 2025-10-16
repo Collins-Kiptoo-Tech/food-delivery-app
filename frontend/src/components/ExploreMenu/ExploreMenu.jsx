@@ -18,7 +18,7 @@ const ExploreMenu = ({ category, setCategory }) => {
   // Friendly category names (optional)
   const categoryNameMap = {
     Salad: "Chicken",
-    Desserts: "Sweet Treats",
+    Rolls: "Beef",
     Sandwiches: "Gourmet Sandwiches",
     Beverages: "Drinks",
     Pizza: "Pizza Specials",
@@ -38,6 +38,14 @@ const ExploreMenu = ({ category, setCategory }) => {
     return images[index] || menu1; // fallback to first image
   };
 
+  const handleCategoryClick = (cat) => {
+    if (category === cat) {
+      setCategory("All"); // if clicked again, reset to show all
+    } else {
+      setCategory(cat);
+    }
+  };
+
   return (
     <div className="explore-menu" id="explore-menu">
       <h1>Explore our menu</h1>
@@ -54,7 +62,7 @@ const ExploreMenu = ({ category, setCategory }) => {
             className={`explore-menu-list-item ${
               category === cat ? "active-item" : ""
             }`}
-            onClick={() => setCategory(cat)}
+            onClick={() => handleCategoryClick(cat)}
           >
             <img
               src={getCategoryImage(index)}

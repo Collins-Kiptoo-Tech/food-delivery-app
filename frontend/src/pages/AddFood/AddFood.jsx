@@ -63,10 +63,10 @@ const AddFood = () => {
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
           <option value="All">All</option>
           <option value="Chicken">Chicken</option>
-          <option value="Rolls">Rolls</option>
-          <option value="Burger">Burger</option>
-          <option value="Dessert">Dessert</option>
-          <option value="Drinks">Drinks</option>
+          <option value="Beef">Beef</option>
+          <option value="Fish">Fish</option>
+          <option value="Sandwich">Sandwich</option>
+          <option value="Ugali Dishes">Ugali Dishes</option>
         </select>
         <input
           type="file"

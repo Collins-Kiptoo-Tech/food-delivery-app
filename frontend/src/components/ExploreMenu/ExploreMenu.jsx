@@ -17,10 +17,11 @@ const ExploreMenu = ({ category, setCategory }) => {
 
   // Friendly category names (optional)
   const categoryNameMap = {
-    Salad: "Chicken",
-    Rolls: "Beef",
-    Sandwiches: "Gourmet Sandwiches",
-    Beverages: "Drinks",
+    Chicken: "Chicken",
+    Beef: "Beef",
+    Fish: "Fish",
+    Sandwich: "Sandwich",
+    UgaliDishes: "Ugali Dishes",
     Pizza: "Pizza Specials",
     Pasta: "Pasta Dishes",
     Snacks: "Quick Bites",

@@ -7,6 +7,7 @@ import FoodDisplay from "../../components/FoodDisplay/FoodDisplay";
 import AppDownload from "../../components/AppDownload/AppDownload";
 import Blog from "../../components/Blog/Blog";
 import OfferBanner from "../../components/OfferBanner/OfferBanner";
+import WhyChooseUs from "../../WhyChooseUs/WhyChooseUs";
 
 const Home = () => {
   const [category, setCategory] = useState("All");
@@ -16,7 +17,12 @@ const Home = () => {
       <SearchBar />
       <OfferBanner />
       <Header />
-      <ExploreMenu category={category} setCategory={setCategory} />
+
+      <div className="menu-horizontal">
+        <ExploreMenu category={category} setCategory={setCategory} />
+        <WhyChooseUs />
+      </div>
+
       <FoodDisplay category={category} />
       <AppDownload />
       <Blog />

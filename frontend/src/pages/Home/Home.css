@@ -1,3 +1,77 @@
-.home{
-    background: burlywood;
+/* Container for Explore Menu and Why Choose Us */
+.menu-horizontal {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  width: 90%;
+  margin: 40px auto;
+  max-width: 1300px;
+}
+
+/* Explore Menu takes more horizontal space */
+.menu-horizontal > :first-child {
+  flex: 3;
+}
+
+/* Why Choose Us - smaller section aligned lower */
+.menu-horizontal > :last-child {
+  flex: 1;
+  min-width: 260px;
+  margin-top: 90px; /* ⬇️ Moves it lower below Explore Menu */
+  background: #fffdf8;
+  margin-right: -60px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+/* Optional hover effect for Why Choose Us */
+.menu-horizontal > :last-child:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 1024px) {
+  .menu-horizontal {
+    gap: 30px;
+  }
+
+  .menu-horizontal > :last-child {
+    margin-top: 70px;
+  }
+}
+
+@media (max-width: 900px) {
+  .menu-horizontal {
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+  }
+
+  .menu-horizontal > :first-child,
+  .menu-horizontal > :last-child {
+    width: 100%;
+    margin-top: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+}
+
+/* Smooth fade-in when page loads */
+.menu-horizontal {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -1,0 +1,109 @@
+.add-category {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 50px 0;
+  background-color: #faf8f6;
+  min-height: calc(100vh - 80px);
+  font-family: "Poppins", sans-serif;
+  margin-left: 400px;
+  margin-bottom: 600px;
+}
+
+.add-category form {
+  background-color: #ffffff;
+  width: 90%;
+  max-width: 500px;
+  padding: 40px 50px;
+  border-radius: 20px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  transition: all 0.3s ease;
+}
+
+.add-category form:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.add-category p {
+  font-size: 16px;
+  font-weight: 600;
+  color: #3a2e2e;
+  margin-bottom: 6px;
+}
+
+.add-category-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.add-category-image label img {
+  width: 150px;
+  height: 150px;
+  border-radius: 100%;
+  border: 2px dashed #c9a36a;
+  cursor: pointer;
+  object-fit: cover;
+  transition: all 0.3s ease-in-out;
+  background-color: #fff7ee;
+}
+
+.add-category-image label img:hover {
+  transform: scale(1.05);
+  border-color: #a06a2a;
+  background-color: #fff2df;
+}
+
+.add-category-name input {
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+.add-category-name input:focus {
+  border-color: #a06a2a;
+  box-shadow: 0 0 0 3px rgba(160, 106, 42, 0.2);
+}
+
+.add-category-btn {
+  background-color: #8b5e34;
+  color: #fff;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.add-category-btn:hover {
+  background-color: #a06a2a;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+  .add-category form {
+    padding: 30px 20px;
+  }
+
+  .add-category-image label img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .add-category-btn {
+    font-size: 15px;
+    padding: 12px;
+  }
+}

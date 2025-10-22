@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import "./Add.css";
 import { assets } from "../../assets/assets";
 import axios from "axios";
 import { toast } from "react-toastify";
+
 const Add = ({ url }) => {
   const [image, setImage] = useState(false);
   const [data, setData] = useState({
@@ -42,14 +42,64 @@ const Add = ({ url }) => {
   };
 
   return (
-    <div className="add">
-      <form className="flex-col" onSubmit={onSubmitHandler}>
-        <div className="add-img-upload flex-col">
-          <p>Upload Image</p>
-          <label htmlFor="image">
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "flex-start",
+        padding: "20px",
+        backgroundColor: "#f8f9fa",
+        minHeight: "100vh",
+        fontFamily: '"Poppins", sans-serif',
+        paddingRight: "60px",
+      }}
+    >
+      <form
+        onSubmit={onSubmitHandler}
+        style={{
+          background: "white",
+          width: "100%",
+          maxWidth: "400px",
+          padding: "25px",
+          borderRadius: "12px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "18px",
+          marginRight: "40px",
+        }}
+      >
+        {/* Image Upload */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <p
+            style={{
+              fontSize: "16px",
+              fontWeight: "600",
+              color: "#2d3748",
+              margin: 0,
+            }}
+          >
+            Upload Image
+          </p>
+          <label htmlFor="image" style={{ cursor: "pointer" }}>
             <img
               src={image ? URL.createObjectURL(image) : assets.upload_area}
               alt=""
+              style={{
+                width: "90px",
+                height: "90px",
+                borderRadius: "8px",
+                border: "2px dashed #c9a36a",
+                objectFit: "cover",
+                backgroundColor: "#fff7ee",
+              }}
             />
           </label>
           <input
@@ -60,53 +110,176 @@ const Add = ({ url }) => {
             required
           />
         </div>
-        <div className="add-product-name flex-col">
-          <p>Product name</p>
+
+        {/* Product Name */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <p
+            style={{
+              fontSize: "14px",
+              fontWeight: "600",
+              color: "#2d3748",
+              margin: 0,
+            }}
+          >
+            Product name
+          </p>
           <input
             onChange={onChangeHandler}
             value={data.name}
             type="text"
             name="name"
             placeholder="Type here"
+            style={{
+              padding: "11px 12px",
+              border: "1px solid #e2e8f0",
+              borderRadius: "8px",
+              fontSize: "14px",
+              fontFamily: '"Poppins", sans-serif',
+              backgroundColor: "#f7fafc",
+              outline: "none",
+            }}
           />
         </div>
-        <div className="add-product-description flex-col">
-          <p>Product Description</p>
+
+        {/* Product Description */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <p
+            style={{
+              fontSize: "14px",
+              fontWeight: "600",
+              color: "#2d3748",
+              margin: 0,
+            }}
+          >
+            Product Description
+          </p>
           <textarea
             onChange={onChangeHandler}
             value={data.description}
             name="description"
-            rows="6"
             placeholder="Write content here"
             required
+            style={{
+              padding: "11px 12px",
+              border: "1px solid #e2e8f0",
+              borderRadius: "8px",
+              fontSize: "14px",
+              fontFamily: '"Poppins", sans-serif',
+              backgroundColor: "#f7fafc",
+              minHeight: "80px",
+              resize: "vertical",
+              outline: "none",
+            }}
           ></textarea>
         </div>
-        <div className="add-category-price">
-          <div className="add-category flex-col">
-            <p>Product Category</p>
-            <select onChange={onChangeHandler} name="category">
-              <option value="Salad">Salad</option>
-              <option value="Rolls">Rolls</option>
-              <option value="Deserts">Deserts</option>
+
+        {/* Category and Price */}
+        <div style={{ display: "flex", gap: "15px" }}>
+          {/* Category */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "6px",
+              flex: 1,
+              minWidth: "0",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "14px",
+                fontWeight: "600",
+                color: "#2d3748",
+                margin: 0,
+              }}
+            >
+              Product Category
+            </p>
+            <select
+              name="category"
+              value={data.category}
+              onChange={onChangeHandler}
+              required
+              style={{
+                padding: "11px 12px",
+                border: "1px solid #e2e8f0",
+                borderRadius: "8px",
+                fontSize: "14px",
+                fontFamily: '"Poppins", sans-serif',
+                backgroundColor: "#f7fafc",
+                outline: "none",
+                cursor: "pointer",
+              }}
+            >
+              <option value="">-- Select Category --</option>
+              <option value="Chicken">Chicken</option>
+              <option value="Beef">Beef</option>
+              <option value="Fish">Fish</option>
               <option value="Sandwich">Sandwich</option>
-              <option value="Cake">Cake</option>
+              <option value="Ugali Dishes">Ugali Dishes</option>
               <option value="Pure Veg">Pure Veg</option>
               <option value="Pasta">Pasta</option>
               <option value="Noodles">Noodles</option>
             </select>
           </div>
-          <div className="add-price flex-col">
-            <p>Product Price</p>
+
+          {/* Price */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "6px",
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
+            <p
+              style={{
+                fontSize: "14px",
+                fontWeight: "600",
+                color: "#2d3748",
+                margin: 0,
+              }}
+            >
+              Product Price
+            </p>
             <input
               onChange={onChangeHandler}
               value={data.price}
               type="number"
               name="price"
-              placeholder="$20"
+              placeholder="Ksh 550"
+              style={{
+                padding: "11px 12px",
+                border: "1px solid #e2e8f0",
+                borderRadius: "8px",
+                fontSize: "14px",
+                fontFamily: '"Poppins", sans-serif',
+                backgroundColor: "#f7fafc",
+                outline: "none",
+              }}
             />
           </div>
         </div>
-        <button type="submit" className="add-btn">
+
+        {/* ADD Button */}
+        <button
+          type="submit"
+          style={{
+            backgroundColor: "#8b5e34",
+            color: "white",
+            padding: "13px",
+            border: "none",
+            borderRadius: "8px",
+            fontSize: "15px",
+            fontWeight: "600",
+            cursor: "pointer",
+            marginTop: "5px",
+            fontFamily: '"Poppins", sans-serif',
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+          }}
+        >
           ADD
         </button>
       </form>

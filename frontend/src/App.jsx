@@ -10,7 +10,6 @@ import Verify from "./pages/Verify/Verify";
 import MyOrders from "./pages/MyOrders/MyOrders";
 import PaymentCompleted from "./pages/PaymentCompleted/PaymentCompleted";
 import Blog from "./components/Blog/Blog.jsx";
-import AddFood from "./pages/AddFood/AddFood";
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -27,7 +26,6 @@ const App = () => {
           <Route path="/myorders" element={<MyOrders />} />
           <Route path="/payment-completed" element={<PaymentCompleted />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/addfood" element={<AddFood />} />
         </Routes>
       </div>
       <Footer />

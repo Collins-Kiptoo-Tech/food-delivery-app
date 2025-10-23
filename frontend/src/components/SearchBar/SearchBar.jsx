@@ -1,19 +1,3 @@
-/*import React from "react";
-import { FaSearch } from "react-icons/fa";
-import "./SearchBar.css";
-
-const SearchBar = () => {
-  return (
-    <div className="search-bar">
-      <FaSearch className="search-icon" />
-      <input type="text" placeholder="Search for food, drinks or categories" />
-      <button className="search-btn">Search</button>
-    </div>
-  );
-};
-
-export default SearchBar;*/
-
 import React, { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import "./SearchBar.css";
@@ -64,7 +48,7 @@ const SearchBar = () => {
       const filtered = allSuggestions.filter((item) =>
         item.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setSuggestions(filtered.slice(0, 15)); // Show max 15 filtered results
+      setSuggestions(filtered.slice(0, 10)); // Show max 15 filtered results
     }
   }, [searchTerm]);
 
@@ -126,9 +110,6 @@ const SearchBar = () => {
               {suggestion}
             </div>
           ))}
-          <div className="suggestions-footer">
-            <p>All results for &quot;{searchTerm}&quot;</p>
-          </div>
         </div>
       )}
     </div>

@@ -1,29 +1,40 @@
+/* ===========================
+   HEADER MAIN STYLING
+=========================== */
 
 .header {
   position: relative;
   height: 30vw;
   width: 100%;
   margin: 0;
-  overflow: hidden;
-
-  /* ✅ Ensure the image fills edge to edge */
-  background: url('/header_img.png') no-repeat center center;
+  overflow: visible;
+  background: url("/header_img.png") no-repeat center center;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-/* Remove these if previously added */
+/* Ensure the image stays clean and uncluttered */
 .header::before,
 .header::after {
   content: none;
 }
 
+/* Wrapper for text and WhyChooseUs */
+.header-contents-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ===========================
+   LEFT TEXT CONTENT
+=========================== */
 .header-contents {
   position: absolute;
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: flex-start;
   gap: 1.5vw;
   max-width: 50%;
   bottom: 10%;
@@ -33,40 +44,113 @@
 }
 
 .header-contents h2 {
-  font-weight: 500;
-  color: white;
-  font-size: max(4.5vw, 22px);
+  font-weight: 700;
+  color: #fff8f0;
+  font-size: max(4.2vw, 30px);
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+  line-height: 1.15;
+  letter-spacing: 0.3px;
+  background: linear-gradient(90deg, #ffe6b0, #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .header-contents p {
-  color: white;
-  font-size: 1vw;
+  color: #f8f5ef;
+  font-size: max(1.1vw, 15px);
+  line-height: 1.6;
+  max-width: 85%;
+  opacity: 0.95;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
-
 .header-contents button {
+  background: linear-gradient(90deg, #ffb347, #ffcc33);
   border: none;
-  color: #747474;
-  font-weight: 500;
-  padding: 1vw 2.3vw;
-  background-color: white;
-  font-size: max(1vw, 13px);
-  border-radius: 50px;
+  color: #4a2c00;
+  font-weight: 600;
+  padding: 1vw 2.8vw;
+  border-radius: 40px;
+  font-size: max(1vw, 15px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
+.header-contents button:hover {
+  background: linear-gradient(90deg, #ffd27f, #ffe680);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+/* ===========================
+   WHY CHOOSE US (RIGHT SIDE)
+=========================== */
+.why-choose-us-side {
+  position: absolute;
+  top: 45%; /* ⬆️ Moved slightly higher from 58% → 50% */
+  right: 3.5%; /* ⬅️ Distance from the right edge */
+  transform: translateY(-50%);
+  z-index: 3;
+  transition: all 0.3s ease;
+}
+
+/* Keep it anchored perfectly on zoom */
+@media (min-width: 1500px) {
+  .why-choose-us-side {
+    top: 47%; /* Adjusted for very large screens */
+    right: 4%;
+  }
+}
+
+/* ===========================
+   RESPONSIVE BEHAVIOR
+=========================== */
 @media (max-width: 1050px) {
+  .header {
+    height: 50vw;
+  }
+
   .header-contents {
-    max-width: 45%;
+    max-width: 60%;
+    bottom: 12%;
+  }
+
+  .why-choose-us-side {
+    position: static;
+    transform: none;
+    margin-top: 25px;
   }
 }
 
 @media (max-width: 750px) {
-  .header-contents {
-    max-width: 65%;
+  .header {
+    height: 60vw;
   }
+
+  .header-contents {
+    max-width: 80%;
+  }
+
   .header-contents p {
     display: none;
   }
+
   .header-contents button {
     padding: 2vw 4vw;
+  }
+}
+
+/* ===========================
+   ANIMATIONS
+=========================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

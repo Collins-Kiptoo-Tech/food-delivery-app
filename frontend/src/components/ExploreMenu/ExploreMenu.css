@@ -1,30 +1,42 @@
-/* ExploreMenu.css */
+/* ============================
+   EXPLORE MENU SECTION
+============================ */
 
 .explore-menu {
-  padding: 40px 20px;
+  padding: 40px 4vw;
   text-align: center;
-  background-color: #fff;
+  background: linear-gradient(135deg, #fff3e0, #ffe6b3); /* warm gradient */
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  margin: 30px auto;
+  max-width: 1200px;
 }
 
+/* Title */
 .explore-menu h1 {
-  font-size: 3rem;           /* larger, welcoming font */
-  font-weight: 700;           /* bold but friendly */
-  color: #8B4513;             /* warm brown color */
+  font-size: max(2.5vw, 32px);
+  font-weight: 700;
+  color: #5a3a00; /* warm brown */
   margin-bottom: 15px;
-  text-shadow: 2px 2px 5px rgba(139, 69, 19, 0.3); /* soft shadow for depth */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* friendly font */
-  letter-spacing: 1px;        /* subtle spacing for elegance */
+  text-shadow: 2px 2px 5px rgba(139,69,19,0.2);
+  letter-spacing: 1px;
 }
+
+/* Description text */
 .explore-menu-text {
-  font-size: 1.2rem;         /* slightly bigger for welcoming feel */
-  color: #6b4f3b;            /* warm soft brown */
+  font-size: 1.15rem;               /* slightly larger for better readability */
+  color: #6b4f3b;                   /* soft warm brown */
   margin-bottom: 30px;
-  max-width: 700px;
+  max-width: 700px;                  /* limits line length for easy reading */
   margin-left: auto;
   margin-right: auto;
-  line-height: 1.6;           /* easier to read */
+  line-height: 1.7;                  /* relaxed line spacing */
+  text-align: center;                /* centered under title */
+  letter-spacing: 0.5px;             /* subtle spacing for elegance */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.05); /* soft shadow for subtle depth */
 }
 
+/* Menu grid */
 .explore-menu-list {
   display: flex;
   flex-wrap: wrap;
@@ -32,6 +44,7 @@
   gap: 20px;
 }
 
+/* Menu items */
 .explore-menu-list-item {
   cursor: pointer;
   width: 140px;
@@ -40,36 +53,68 @@
   border: 3px solid transparent; /* default border */
 }
 
+/* Hover effect */
 .explore-menu-list-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
+/* Category image */
 .category-image {
   width: 120px;
   height: 120px;
   object-fit: cover;
-  border-radius: 50%;
+  border-radius: 8px; /* subtle rounding */
   border: 2px solid transparent;
   margin-bottom: 10px;
-  transition: transform 0.3s;
+  transition: transform 0.3s, border 0.3s;
 }
-
-/* Hover animation effect */
-
 
 /* Active category styling */
 .active-item {
-  border: 3px solid brown; /* brown border when clicked */
+  border: 3px solid #8B4513; /* brown border when clicked */
 }
 
 .active-item .category-image {
   transform: scale(1.05);
 }
 
+/* Category label text */
 .explore-menu-list-item p {
   font-size: 1rem;
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: #5a3a00; /* warm brown */
   margin: 0;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* subtle depth */
+  transition: color 0.3s;
 }
+
+/* Hover and active label */
+.explore-menu-list-item:hover p,
+.active-item p {
+  color: #8B4513; /* darker brown */
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .explore-menu-list-item {
+    width: 120px;
+  }
+  .category-image {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 600px) {
+  .explore-menu-list-item {
+    width: 100px;
+  }
+  .category-image {
+    width: 80px;
+    height: 80px;
+  }
+}
+

@@ -1,80 +1,137 @@
-.food-item{
+/* ============================
+   Food Item Card – Edge-to-Edge Image Version
+============================ */
 
-    width: 100%;
-    margin: auto;
-    border-radius: 15px;
-    box-shadow: 0px 0px 10px #00000015;
-    transition: 0.3s;
-    animation: fadeIn 1s;
-
+.food-item {
+  width: 100%;
+  margin: auto;
+  border-radius: 12px;
+  box-shadow: 0px 2px 8px #00000015;
+  transition: 0.3s ease;
+  animation: fadeIn 0.8s;
+  background-color: #fff;
+  overflow: hidden; /* ensures edges stay clean */
+  padding: 0; /* removes internal padding that caused gaps */
 }
 
-
-
-.food-item-image{
-    width: 90%;
-    border-radius: 15px 15px 0px 0px;
-    height: 180px;
+.food-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 4px 12px #00000025;
 }
 
-.food-item-info{
-    padding: 20px;
+/* ============================
+   Image Styling – Full Width
+============================ */
+.food-item-img-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
 }
 
-.food-item-name-rating{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+.food-item-image {
+  width: 100%; /* 🔥 edge-to-edge */
+  height: 160px; /* slightly taller for balance */
+  object-fit: cover;
+  display: block;
+  border-radius: 12px 12px 0 0;
+  transition: transform 0.3s ease;
 }
 
-.food-item-name-rating p{
-    font-size: 20px;
-    font-weight: 500;
+.food-item-image:hover {
+  transform: scale(1.05);
 }
 
-.food-item-name-rating img{
-    width: 70px;
+/* ============================
+   Content
+============================ */
+.food-item-info {
+  padding: 12px 14px;
 }
 
-.food-item-desc{
-    color: #676767;
-    font-size: 12px ;
+.food-item-name-rating {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
 }
 
-.food-item-price{
-     color: tomato;
-     font-size: 22px;
-     font-weight: 500;
-     margin: 10px 0px;
+.food-item-name-rating p {
+  font-size: 16px;
+  font-weight: 600;
+  color: #4a2c00;
 }
 
-.food-item-img-container{
-    position: relative;
+.food-item-name-rating img {
+  width: 60px;
 }
 
-.food-item-img-container .add{
-    width: 35px;
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
-    cursor: pointer;
-    border-radius: 50%;
+/* ============================
+   Description & Price
+============================ */
+.food-item-desc {
+  color: #676767;
+  font-size: 12px;
+  line-height: 1.3;
+  height: 36px;
+  overflow: hidden;
 }
 
-.food-item-counter{
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px;
-    border-radius: 50px;
-    background-color: white;
-}
-.food-item-counter img{
-    width: 30px;
+.food-item-price {
+  color: tomato;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 8px 0 0;
 }
 
-/* --- Food card container --- */
+/* ============================
+   Add Button / Counter
+============================ */
+.food-item-img-container .add {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: 0.2s ease;
+}
+
+.food-item-img-container .add:hover {
+  transform: scale(1.1);
+}
+
+.food-item-counter {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 50px;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.food-item-counter img {
+  width: 26px;
+}
+
+/* ============================
+   Animation
+============================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

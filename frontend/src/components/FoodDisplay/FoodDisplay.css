@@ -1,20 +1,37 @@
-.food-display{
-    margin-top: 30px;
+/* ============================
+   FOOD DISPLAY SECTION
+============================ */
+
+.food-display {
+  margin-top: 30px;
+  padding: 0 4vw; /* Gentle horizontal padding */
+  background: linear-gradient(135deg, #fff3e0, #ffddb3); /* Warm, inviting gradient */
+
+  /* Make section full-width */
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+
+  /* Subtle top shadow for depth */
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+
+  /* Soft ambient glow around section */
+  filter: drop-shadow(0 0 30px rgba(255, 200, 120, 0.3));
 }
 
-.food-display h2{
-    font-size: max(2vw,24px);
-    font-weight: 600;
+/* Title */
+.food-display h2 {
+  font-size: max(2vw, 24px);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 25px;
+  color: #5a3a00; /* slightly warmer brown */
 }
 
-/*.food-display-list{
-    display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
-    margin-top: 30px;
-    gap: 30px;
-    row-gap: 50px;
-}*/
-
+/* Category section */
 .category-section {
   margin-top: 40px;
 }
@@ -24,14 +41,69 @@
   font-weight: 600;
   margin-bottom: 20px;
   text-transform: capitalize;
-  color: #333;
+  color: #4a2c00;
+  text-align: left;
 }
 
+/* Food item grid */
 .food-display-list {
   display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
-    margin-top: 30px;
-    gap: 30px;
-    row-gap: 50px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 25px;
+  row-gap: 45px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* Food item hover effect */
+.food-item {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.food-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================
+   LOAD MORE BUTTON
+============================ */
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.load-more-btn {
+  padding: 10px 25px;
+  background-color: #ffcc99; /* Warm color */
+  border: none;
+  border-radius: 8px;
+  color: #4a2c00;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.load-more-btn:hover {
+  background-color: #ffb347;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .food-display {
+    padding: 0 3vw;
+  }
+  .food-display-list {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .food-display-list {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
 }
 

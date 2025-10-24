@@ -15,9 +15,13 @@ const App = () => {
   const [showLogin, setShowLogin] = useState(false);
   return (
     <>
-      {showLogin ? <LoginPopup setShowLogin={setShowLogin} /> : <></>}
+      {showLogin && <LoginPopup setShowLogin={setShowLogin} />}
+
+      {/* ✅ Navbar OUTSIDE .app */}
+      <Navbar setShowLogin={setShowLogin} />
+
+      {/* ✅ Padding from .app now affects content BELOW navbar */}
       <div className="app">
-        <Navbar setShowLogin={setShowLogin} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cart" element={<Cart />} />
@@ -28,6 +32,7 @@ const App = () => {
           <Route path="/blog" element={<Blog />} />
         </Routes>
       </div>
+
       <Footer />
     </>
   );

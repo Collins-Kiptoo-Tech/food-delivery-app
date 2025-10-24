@@ -1,44 +1,146 @@
-/* Container for Explore Menu and Why Choose Us */
+/* ============================
+   GLOBAL RESET
+============================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden; /* removes horizontal scroll */
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ============================
+   HOMEPAGE FULL BACKGROUND
+============================ */
+.homepage {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fff3e0, #ffddb3); /* warm gradient */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow-x: hidden; /* ensures no horizontal scroll */
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================
+   INNER CONTAINER
+============================ */
+.inner-container {
+  width: 100%;
+  max-width: 1300px;   /* content width for readability */
+  margin: 0 auto;
+  padding: 0 2rem;     /* inner padding */
+  box-sizing: border-box;
+}
+
+/* ============================
+   FOOD DISPLAY SECTION
+============================ */
+.food-display {
+  width: 100%;
+  max-width: 100%;
+  margin: 50px 0;
+  padding: 2rem 2rem;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.food-display-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 25px;
+}
+
+.food-item {
+  background: rgba(255, 255, 255, 0.85); /* semi-transparent for readability */
+  padding: 1rem;
+  border-radius: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.food-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================
+   LOAD MORE BUTTON
+============================ */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.load-more-btn {
+  padding: 10px 25px;
+  background-color: #ffcc99;
+  border: none;
+  border-radius: 8px;
+  color: #4a2c00;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.load-more-btn:hover {
+  background-color: #ffb347;
+  transform: translateY(-2px);
+}
+
+/* ============================
+   MENU HORIZONTAL (Explore + Why Choose Us)
+============================ */
 .menu-horizontal {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 40px;
-  width: 90%;
-  margin: 40px auto;
-  max-width: 1300px;
+  width: 100%;
+  max-width: 100%;
+  margin: 40px 0;
+  padding: 0 2rem;
+  box-sizing: border-box;
 }
 
-/* Explore Menu takes more horizontal space */
 .menu-horizontal > :first-child {
   flex: 3;
 }
 
-/* Why Choose Us - smaller section aligned lower */
 .menu-horizontal > :last-child {
   flex: 1;
   min-width: 260px;
-  margin-top: 90px; /* ⬇️ Moves it lower below Explore Menu */
+  margin-top: 90px;
   background: #fffdf8;
-  margin-right: -60px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   padding: 20px;
   transition: all 0.3s ease;
 }
 
-/* Optional hover effect for Why Choose Us */
 .menu-horizontal > :last-child:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
 
-/* Responsive design for smaller screens */
+/* ============================
+   RESPONSIVE ADJUSTMENTS
+============================ */
 @media (max-width: 1024px) {
   .menu-horizontal {
     gap: 30px;
   }
-
   .menu-horizontal > :last-child {
     margin-top: 70px;
   }
@@ -49,6 +151,7 @@
     flex-direction: column;
     align-items: center;
     gap: 25px;
+    padding: 0 1.5rem;
   }
 
   .menu-horizontal > :first-child,
@@ -58,9 +161,25 @@
     box-shadow: none;
     padding: 0;
   }
+
+  .food-display {
+    padding: 1.5rem;
+  }
+
+  .food-display-list {
+    gap: 20px;
+  }
 }
 
-/* Smooth fade-in when page loads */
+@media (max-width: 600px) {
+  .food-display-list {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+/* ============================
+   SMOOTH FADE-IN ANIMATION
+============================ */
 .menu-horizontal {
   animation: fadeIn 0.5s ease-in-out;
 }
@@ -75,3 +194,5 @@
     transform: translateY(0);
   }
 }
+
+

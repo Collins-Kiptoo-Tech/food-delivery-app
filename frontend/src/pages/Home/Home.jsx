@@ -10,9 +10,9 @@ import OfferBanner from "../../components/OfferBanner/OfferBanner";
 
 const Home = () => {
   const [category, setCategory] = useState("All");
-  const [searchTerm, setSearchTerm] = useState("");
+
   return (
-    <div>
+    <div className="homepage">
       <SearchBar />
       <OfferBanner />
       <Header />

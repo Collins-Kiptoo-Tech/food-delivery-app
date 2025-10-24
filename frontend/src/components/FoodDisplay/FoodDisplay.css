@@ -1,24 +1,17 @@
 /* ============================
-   FOOD DISPLAY SECTION
+   FOOD DISPLAY SECTION - CENTERED CONTENT
 ============================ */
 
 .food-display {
   margin-top: 30px;
-  padding: 0 4vw; /* Gentle horizontal padding */
-  background: linear-gradient(135deg, #fff3e0, #ffddb3); /* Warm, inviting gradient */
-
-  /* Make section full-width */
-  width: 100vw;
+  padding: 0 4vw; /* gentle horizontal padding */
+  background: linear-gradient(135deg, #fff3e0, #ffddb3); /* full-width background */
+  width: 100%;
+  box-sizing: border-box;
   position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
 
-  /* Subtle top shadow for depth */
+  /* Shadows & glow */
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-
-  /* Soft ambient glow around section */
   filter: drop-shadow(0 0 30px rgba(255, 200, 120, 0.3));
 }
 
@@ -28,7 +21,7 @@
   font-weight: 600;
   text-align: center;
   margin-bottom: 25px;
-  color: #5a3a00; /* slightly warmer brown */
+  color: #5a3a00;
 }
 
 /* Category section */
@@ -45,14 +38,15 @@
   text-align: left;
 }
 
-/* Food item grid */
+/* Food item grid - centered */
 .food-display-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 25px;
   row-gap: 45px;
-  max-width: 1300px;
-  margin: 0 auto;
+  max-width: 1300px; /* content doesn’t stretch too much */
+  margin: 0 auto;    /* centers the grid horizontally */
+  box-sizing: border-box;
 }
 
 /* Food item hover effect */
@@ -76,7 +70,7 @@
 
 .load-more-btn {
   padding: 10px 25px;
-  background-color: #ffcc99; /* Warm color */
+  background-color: #ffcc99;
   border: none;
   border-radius: 8px;
   color: #4a2c00;
@@ -106,4 +100,5 @@
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   }
 }
+
 

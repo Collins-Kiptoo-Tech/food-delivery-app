@@ -1,54 +1,45 @@
-/* ============================
-   SEARCH BAR CONTAINER
-============================ */
 .search-bar {
   display: flex;
   align-items: center;
   width: 100%;
   max-width: 700px;
-  margin: 4px auto 20px auto;           /* top margin reduced for higher position */
+  margin: 100px auto 20px auto;           
   padding: 12px 20px;
-  border-radius: 50px;                  /* pill-shaped */
-  background: #fffaf3;                  /* warm cream background */
+  border-radius: 50px;               
+  background: #fffaf3;                 
   box-shadow: 0 6px 20px rgba(0,0,0,0.08);
   position: relative;
   transition: box-shadow 0.3s ease;
-  margin-top: 20px;
+  margin-top: 170px;
 }
 
 .search-bar:focus-within {
-  box-shadow: 0 8px 25px rgba(255,180,71,0.3); /* warm highlight */
+  box-shadow: 0 8px 25px rgba(255,180,71,0.3); 
 }
 
-/* ============================
-   SEARCH ICON
-============================ */
+
 .search-icon {
   font-size: 20px;
-  color: #8B4513;                       /* warm brown */
+  color: #8B4513;                      
   margin-right: 12px;
 }
 
-/* ============================
-   INPUT FIELD
-============================ */
+
 .search-bar input {
   flex: 1;
   border: none;
   outline: none;
   background: transparent;
   font-size: 16px;
-  color: #4a2c00;                      /* dark brown text */
+  color: #4a2c00;                 
 }
 
 .search-bar input::placeholder {
-  color: #a57c52;                      /* soft brown placeholder */
+  color: #a57c52;                     
   font-style: italic;
 }
 
-/* ============================
-   SEARCH BUTTON
-============================ */
+
 .search-btn {
   padding: 10px 20px;
   margin-left: 10px;
@@ -66,25 +57,23 @@
   box-shadow: 0 6px 15px rgba(255,180,71,0.3);
 }
 
-/* ============================
-   SUGGESTIONS DROPDOWN
-============================ */
+
 .suggestions-dropdown {
   position: absolute;
   top: 110%;
   left: 0;
   right: 0;
-  background: #fffaf3;                  /* warm background */
+  background: #fffaf3;                  
   border-radius: 20px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.12);
   margin-top: 10px;
-  max-height: none;                     /* show all items */
-  overflow-y: visible;                  /* remove scroll */
+  max-height: none;                     
+  overflow-y: visible;                  
   z-index: 100;
   padding: 5px 0;
 }
 
-/* Suggestion items */
+
 .suggestion-item {
   display: flex;
   align-items: center;
@@ -92,7 +81,7 @@
   padding: 12px 20px;
   cursor: pointer;
   font-size: 14px;
-  color: #5a3a00;                      /* warm brown text */
+  color: #5a3a00;                      
   transition: background 0.2s, transform 0.2s, font-weight 0.2s;
 }
 
@@ -103,7 +92,7 @@
   transform: translateX(3px);
 }
 
-/* Optional thumbnail images */
+
 .suggestion-item img {
   width: 40px;
   height: 40px;
@@ -112,9 +101,7 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-/* ============================
-   RESPONSIVE
-============================ */
+
 @media (max-width: 600px) {
   .search-bar {
     padding: 10px 15px;
@@ -135,4 +122,3 @@
     height: 30px;
   }
 }
-

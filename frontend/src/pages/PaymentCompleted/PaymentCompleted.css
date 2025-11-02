@@ -2,90 +2,140 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 90vh;
   padding: 40px 20px;
-  min-height: 80vh;
-  background-color: #f8f9fa;
+  background: linear-gradient(135deg, #f7fcf8, #ecf9f1);
+  font-family: 'Poppins', sans-serif;
   text-align: center;
-  font-family: 'Arial', sans-serif;
 }
 
+/* ✅ Header Section */
 .payment-completed-page h1 {
-  color: #155724;
-  font-size: 2.2rem;
+  color: #218838;
+  font-size: 2.4rem;
+  font-weight: 700;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .payment-completed-page p {
-  color: #155724;
-  font-size: 1.2rem;
-  margin-bottom: 30px;
+  color: #2e7d32;
+  font-size: 1.1rem;
+  margin-bottom: 35px;
+  font-weight: 500;
 }
 
+/* ✅ Order Summary Card */
 .receipt {
   background-color: #ffffff;
   border: 1px solid #c3e6cb;
-  padding: 25px 20px;
-  border-radius: 10px;
+  border-radius: 14px;
   width: 100%;
-  max-width: 650px;
+  max-width: 720px;
+  padding: 30px 25px;
   margin-bottom: 30px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  animation: fadeInUp 0.6s ease;
 }
 
+/* ✅ Card Header */
 .receipt h2 {
   color: #155724;
+  font-size: 1.6rem;
   margin-bottom: 20px;
-  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
 }
 
+/* ✅ Table Styling */
 .receipt table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.98rem;
 }
 
-.receipt th, .receipt td {
-  padding: 10px 8px;
-  border-bottom: 1px solid #ddd;
+.receipt th,
+.receipt td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e9ecef;
   text-align: left;
 }
 
 .receipt th {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
 }
 
+.receipt td:last-child,
+.receipt th:last-child {
+  text-align: right;
+}
+
+/* ✅ Total Row */
 .total-row td {
-  font-weight: bold;
+  font-weight: 700;
   background-color: #f1f8f4;
+  color: #1b5e20;
+  border-top: 2px solid #c3e6cb;
 }
 
 .total-row td:last-child {
   text-align: right;
 }
 
-.receipt td:last-child, .receipt th:last-child {
-  text-align: right;
-}
-
+/* ✅ Back Button */
 .payment-completed-page button {
-  padding: 12px 25px;
+  padding: 12px 32px;
   background-color: #28a745;
   border: none;
   color: white;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.3s;
-  margin-top: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
 }
 
 .payment-completed-page button:hover {
   background-color: #218838;
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(33, 136, 56, 0.25);
 }
 
+/* ✅ Responsive */
 @media (max-width: 768px) {
-  .receipt table, .receipt th, .receipt td {
+  .receipt {
+    padding: 20px 15px;
+  }
+
+  .receipt table,
+  .receipt th,
+  .receipt td {
     font-size: 0.9rem;
+  }
+
+  .payment-completed-page h1 {
+    font-size: 1.8rem;
+  }
+}
+
+/* ✅ Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

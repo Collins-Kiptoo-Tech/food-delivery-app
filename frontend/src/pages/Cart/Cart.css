@@ -1,75 +1,155 @@
-.cart{
-    margin-top: 100px;
+/* ============================
+   CART PAGE - FreshFeast
+============================ */
+
+.cart {
+  margin-top: 160px;
+  padding: 40px 5vw;
+  background: #fffaf5;
+  min-height: 80vh;
+  font-family: "Poppins", sans-serif;
 }
 
-.cart-items-title{
-    display: grid;
-    grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 0.5fr;
-    align-items: center;
-    color: grey;
-    font-size: max(1vw,12px);
+/* ============================
+   CART ITEMS
+============================ */
+.cart-items-title {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 0.5fr;
+  align-items: center;
+  color: #888;
+  font-size: 1rem;
+  font-weight: 600;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f0f0f0;
 }
 
-.cart-items-item{
-    margin: 10px 0px;
-    color: black;
+.cart-items-item {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 0.5fr;
+  align-items: center;
+  color: #333;
+  font-weight: 500;
+  padding: 15px 0;
+  transition: background 0.2s ease;
 }
 
-.cart-items-item img{
+.cart-items-item:hover {
+  background: #fff1e6;
+  border-radius: 8px;
+}
+
+.cart-items-item img {
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.cart hr {
+  height: 1px;
+  background-color: #e5e5e5;
+  border: none;
+  margin: 10px 0;
+}
+
+.cart-items-item .cross {
+  cursor: pointer;
+  font-weight: bold;
+  color: #ff4d4d;
+  font-size: 1.3rem;
+  transition: color 0.3s;
+}
+
+.cart-items-item .cross:hover {
+  color: #cc0000;
+}
+
+/* ============================
+   CART BOTTOM - CENTERED TOTALS
+============================ */
+.cart-bottom {
+  margin-top: 80px;
+  display: flex;
+  justify-content: center; /* center horizontally */
+  align-items: center; /* center vertically if needed */
+  width: 100%;
+}
+
+/* ============================
+   CART TOTALS BOX
+============================ */
+.cart-total {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  max-width: 400px;
+  width: 90%;
+  text-align: center; /* Center text inside */
+}
+
+.cart-total h2 {
+  color: #222;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+}
+
+.cart-total-details {
+  display: flex;
+  justify-content: space-between;
+  color: #555;
+  font-size: 1rem;
+  margin: 12px 0;
+}
+
+.cart-total hr {
+  border: none;
+  border-bottom: 1px solid #eee;
+  margin: 12px 0;
+}
+
+.cart-total button {
+  border: none;
+  color: white;
+  background: linear-gradient(135deg, #ff7a00, #ff5000);
+  width: 100%;
+  padding: 14px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.cart-total button:hover {
+  background: linear-gradient(135deg, #e76e00, #e64500);
+  transform: translateY(-2px);
+}
+
+/* ============================
+   RESPONSIVENESS
+============================ */
+@media (max-width: 900px) {
+  .cart-items-title,
+  .cart-items-item {
+    grid-template-columns: 1fr 1fr 1fr;
+    font-size: 0.9rem;
+  }
+
+  .cart-items-item img {
     width: 60px;
-}
+    height: 60px;
+  }
 
-.cart hr{
-    height: 1px;
-    background-color: #e2e2e2;
-    border: none;
-}
+  .cart-total {
+    width: 100%;
+    max-width: none;
+  }
 
-.cart-items-item .cross{
-    cursor: pointer;
-}
-
-.cart-bottom{
-    margin-top: 80px;
-    display: flex;
-    justify-content: space-between;
-    gap: max(12vw,20px);
-}
-
-.cart-total{
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.cart-total-details{
-    display: flex;
-    justify-content: space-between;
-    color: #555;
-}
-
-.cart-total hr{
-    margin: 10px 0px;
-    height: 1.5px;
-}
-
-.cart-total button{
-    border: none;
-    color: white;
-    background-color: tomato;
-    width: max(15vw,200px);
-    padding: 12px 0px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-@media (max-width:750px){
-    .cart-bottom{
-        flex-direction: column-reverse;
-    }
-    .cart-promocode{
-        justify-content: start;
-    }
+  .cart {
+    padding: 20px 3vw;
+  }
 }
 

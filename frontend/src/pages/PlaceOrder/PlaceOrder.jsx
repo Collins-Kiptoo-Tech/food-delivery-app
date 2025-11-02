@@ -3,6 +3,7 @@ import "./PlaceOrder.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FiUser, FiMail, FiMapPin, FiPhone } from "react-icons/fi";
 
 const PlaceOrder = () => {
   const { getTotalCartAmount, token, food_list, cartItems, url } =
@@ -22,18 +23,15 @@ const PlaceOrder = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
   const DELIVERY_FEE = 250;
 
-  // Handle input changes
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
     setData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  // Validate inputs
   const validate = () => {
     const newErrors = {};
     const phoneRegex = /^2547\d{8}$/;
@@ -54,10 +52,8 @@ const PlaceOrder = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Place order function (forced navigation for debugging)
   const placeOrder = async (event) => {
     event.preventDefault();
-
     if (!validate()) return;
 
     const orderItems = [];
@@ -77,26 +73,12 @@ const PlaceOrder = () => {
     try {
       setLoading(true);
       setErrors({});
-
-      const response = await axios.post(url + "/api/order/place", orderData, {
+      await axios.post(url + "/api/order/place", orderData, {
         headers: { token },
       });
-
-      console.log("Backend response:", response.data);
-
       setLoading(false);
-
-      // FOR DEBUG: navigate no matter what the backend returns
-      navigate("/payment-completed");
-
-      // If you want to still handle backend success, uncomment below:
-      /*
-      if (response.data.success) {
-        navigate("/payment-completed");
-      } else {
-        setErrors({ form: response.data.message || "Something went wrong" });
-      }
-      */
+      // PlaceOrder.jsx
+      navigate("/payment-methods", { state: { orderData } });
     } catch (err) {
       console.error(err);
       setLoading(false);
@@ -104,7 +86,6 @@ const PlaceOrder = () => {
     }
   };
 
-  // Redirect if no token or empty cart
   useEffect(() => {
     if (!token || getTotalCartAmount() === 0) {
       navigate("/cart");
@@ -112,62 +93,65 @@ const PlaceOrder = () => {
   }, [token, getTotalCartAmount, navigate]);
 
   return (
-    <div>
-      <form onSubmit={placeOrder} className="place-order" noValidate>
-        <div className="place-order-left">
-          <p className="title">Delivery Information</p>
+    <div className="place-order-container">
+      <form onSubmit={placeOrder} className="place-order-form" noValidate>
+        {/* Left - Delivery Info */}
+        <div className="place-order-left card">
+          <h2 className="title">Delivery Information</h2>
 
-          <div className="multi-fields">
-            <div>
-              <input
-                name="firstName"
-                onChange={onChangeHandler}
-                value={data.firstName}
-                type="text"
-                placeholder="First name"
-              />
-              {errors.firstName && (
-                <p className="error-text">{errors.firstName}</p>
-              )}
-            </div>
-            <div>
-              <input
-                name="lastName"
-                onChange={onChangeHandler}
-                value={data.lastName}
-                type="text"
-                placeholder="Last name"
-              />
-              {errors.lastName && (
-                <p className="error-text">{errors.lastName}</p>
-              )}
-            </div>
+          <div className="input-group">
+            <FiUser className="input-icon" />
+            <input
+              name="firstName"
+              onChange={onChangeHandler}
+              value={data.firstName}
+              type="text"
+              placeholder="First Name"
+            />
+            {errors.firstName && (
+              <p className="error-text">{errors.firstName}</p>
+            )}
           </div>
 
-          <div>
+          <div className="input-group">
+            <FiUser className="input-icon" />
+            <input
+              name="lastName"
+              onChange={onChangeHandler}
+              value={data.lastName}
+              type="text"
+              placeholder="Last Name"
+            />
+            {errors.lastName && <p className="error-text">{errors.lastName}</p>}
+          </div>
+
+          <div className="input-group">
+            <FiMail className="input-icon" />
             <input
               name="email"
               onChange={onChangeHandler}
               value={data.email}
               type="email"
-              placeholder="Email address"
+              placeholder="Email Address"
             />
             {errors.email && <p className="error-text">{errors.email}</p>}
           </div>
 
-          <div>
+          <div className="input-group">
+            <FiMapPin className="input-icon" />
             <input
               name="street"
               onChange={onChangeHandler}
               value={data.street}
               type="text"
-              placeholder="Street"
+              placeholder="Street Address"
             />
             {errors.street && <p className="error-text">{errors.street}</p>}
           </div>
 
           <div className="multi-fields">
-            <div>
+            <div className="input-group">
+              <FiMapPin className="input-icon" />
               <input
                 name="city"
                 onChange={onChangeHandler}
@@ -177,7 +161,8 @@ const PlaceOrder = () => {
               />
               {errors.city && <p className="error-text">{errors.city}</p>}
             </div>
-            <div>
+
+            <div className="input-group">
               <input
                 name="state"
                 onChange={onChangeHandler}
@@ -189,17 +174,18 @@ const PlaceOrder = () => {
           </div>
 
           <div className="multi-fields">
-            <div>
+            <div className="input-group">
               <input
                 name="zipcode"
                 onChange={onChangeHandler}
                 value={data.zipcode}
                 type="text"
-                placeholder="Zip code"
+                placeholder="Zip Code"
               />
               {errors.zipcode && <p className="error-text">{errors.zipcode}</p>}
             </div>
-            <div>
+
+            <div className="input-group">
               <input
                 name="country"
                 onChange={onChangeHandler}
@@ -211,13 +197,14 @@ const PlaceOrder = () => {
             </div>
           </div>
 
-          <div>
+          <div className="input-group">
+            <FiPhone className="input-icon" />
             <input
               name="phone"
               onChange={onChangeHandler}
               value={data.phone}
               type="tel"
-              placeholder="Phone (e.g., 2547XXXXXXXX)"
+              placeholder="Phone (2547XXXXXXXX)"
             />
             {errors.phone && <p className="error-text">{errors.phone}</p>}
           </div>
@@ -226,38 +213,54 @@ const PlaceOrder = () => {
 
           <p className="info-text">
             After clicking &quot;Proceed to Payment&quot;, an M-Pesa prompt will
-            appear on your phone. Enter your PIN to complete the payment.
+            appear on your phone. Enter your PIN to complete payment.
           </p>
         </div>
 
-        <div className="place-order-right">
-          <div className="cart-total">
-            <h2>Cart Totals</h2>
+        {/* Right - Cart Totals */}
+        <div className="place-order-right card">
+          <h2>Cart Totals</h2>
 
-            <div className="cart-total-details">
-              <p>Subtotal</p>
-              <p>KES {getTotalCartAmount()}</p>
-            </div>
-            <hr />
-            <div className="cart-total-details">
-              <p>Delivery Fee</p>
-              <p>KES {getTotalCartAmount() === 0 ? 0 : DELIVERY_FEE}</p>
-            </div>
-            <hr />
-            <div className="cart-total-details">
-              <p>Total</p>
-              <b>
-                KES{" "}
-                {getTotalCartAmount() === 0
-                  ? 0
-                  : getTotalCartAmount() + DELIVERY_FEE}
-              </b>
-            </div>
+          {food_list.map((item) =>
+            cartItems[item._id] > 0 ? (
+              <div className="cart-item-summary" key={item._id}>
+                <img
+                  src={`${url}/uploads/${item.image}`} // <-- updated path
+                  alt={item.name}
+                  className="cart-thumb"
+                />
 
-            <button type="submit" disabled={loading}>
-              {loading ? "Processing..." : "PROCEED TO PAYMENT"}
-            </button>
+                <span>
+                  {item.name} x {cartItems[item._id]}
+                </span>
+                <b>KES {item.price * cartItems[item._id]}</b>
+              </div>
+            ) : null
+          )}
+
+          <hr />
+
+          <div className="cart-total-details">
+            <p>Subtotal</p>
+            <p>KES {getTotalCartAmount()}</p>
           </div>
+          <div className="cart-total-details">
+            <p>Delivery Fee</p>
+            <p>KES {getTotalCartAmount() === 0 ? 0 : DELIVERY_FEE}</p>
+          </div>
+          <div className="cart-total-details total">
+            <p>Total</p>
+            <b>
+              KES{" "}
+              {getTotalCartAmount() === 0
+                ? 0
+                : getTotalCartAmount() + DELIVERY_FEE}
+            </b>
+          </div>
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Processing..." : "PROCEED TO PAYMENT"}
+          </button>
         </div>
       </form>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Home from "./pages/Home/Home";
-import { Route, Routes } from "react-router-dom";
 import Cart from "./pages/Cart/Cart";
 import PlaceOrder from "./pages/PlaceOrder/PlaceOrder.jsx";
 import Footer from "./components/Footer/Footer";
@@ -10,22 +10,36 @@ import Verify from "./pages/Verify/Verify";
 import MyOrders from "./pages/MyOrders/MyOrders";
 import PaymentCompleted from "./pages/PaymentCompleted/PaymentCompleted";
 import Blog from "./components/Blog/Blog.jsx";
+import PaymentMethods from "./pages/Payment methods/PaymentMethods.jsx";
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
+  const location = useLocation();
+
+  // ✅ Define routes where Navbar and Footer should be hidden
+  const hideNavbarFooterRoutes = [
+    "/payment-completed",
+    "/order",
+    "/payment-methods",
+  ];
+
+  const shouldHide = hideNavbarFooterRoutes.includes(location.pathname);
+
   return (
     <>
+      {/* ✅ Login popup */}
       {showLogin && <LoginPopup setShowLogin={setShowLogin} />}
 
-      {/* ✅ Navbar OUTSIDE .app */}
-      <Navbar setShowLogin={setShowLogin} />
+      {/* ✅ Conditionally render Navbar */}
+      {!shouldHide && <Navbar setShowLogin={setShowLogin} />}
 
-      {/* ✅ Padding from .app now affects content BELOW navbar */}
+      {/* ✅ Main content */}
       <div className="app">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/order" element={<PlaceOrder />} />
+          <Route path="/payment-methods" element={<PaymentMethods />} />
           <Route path="/verify" element={<Verify />} />
           <Route path="/myorders" element={<MyOrders />} />
           <Route path="/payment-completed" element={<PaymentCompleted />} />
@@ -33,7 +47,8 @@ const App = () => {
         </Routes>
       </div>
 
-      <Footer />
+      {/* ✅ Conditionally render Footer */}
+      {!shouldHide && <Footer />}
     </>
   );
 };

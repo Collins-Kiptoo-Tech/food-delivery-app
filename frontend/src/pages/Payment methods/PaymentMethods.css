@@ -1,0 +1,117 @@
+/* Page background */
+body {
+  margin: 0;
+  padding: 0;
+  background: #f5f7fa; /* light, soft gray-blue for a modern clean feel */
+  font-family: 'Arial', sans-serif;
+}
+
+/* Payment container */
+.payment-methods-page {
+  max-width: 750px;
+  margin: 60px auto;
+  padding: 40px 30px;
+  text-align: center;
+  background: linear-gradient(135deg, #1a1a2e, #162447); /* dark premium gradient */
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+}
+
+/* Optional floating shapes for extra depth */
+.payment-methods-page::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05), transparent 50%);
+  animation: floatShapes 20s linear infinite;
+  z-index: 0;
+}
+
+@keyframes floatShapes {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.payment-methods-page h2 {
+  font-size: 32px;
+  margin-bottom: 35px;
+  color: #f0f0f5;
+  position: relative;
+  z-index: 1;
+}
+
+.payment-cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-bottom: 45px;
+  position: relative;
+  z-index: 1;
+}
+
+.payment-card {
+  flex: 1 1 200px;
+  max-width: 220px;
+  padding: 25px 20px;
+  background: #222240;
+  border-radius: 15px;
+  border: 2px solid #33335c;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: all 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.payment-card:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+  border-color: #00c3ff;
+}
+
+.payment-card.selected {
+  border-color: #00c3ff;
+  box-shadow: 0 15px 30px rgba(0,195,255,0.5);
+}
+
+.payment-icon {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.payment-card span {
+  font-weight: 600;
+  font-size: 17px;
+  color: #f0f0f5;
+}
+
+.proceed-btn {
+  padding: 16px 35px;
+  font-size: 18px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #00c3ff, #0070f3);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10; 
+  position: relative; 
+}
+
+.proceed-btn:hover {
+  background: linear-gradient(90deg, #0070f3, #00c3ff);
+  transform: scale(1.05);
+}
+

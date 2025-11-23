@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./Navbar.css";
 import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
@@ -7,6 +7,9 @@ import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
 
 const Navbar = ({ setShowLogin }) => {
   const [menu, setMenu] = useState("home");
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
   const { getTotalCartCount, token, setToken } = useContext(StoreContext);
   const navigate = useNavigate();
 
@@ -16,14 +19,27 @@ const Navbar = ({ setShowLogin }) => {
     navigate("/");
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY && window.scrollY > 50) {
+        setShowNavbar(false);
+      } else {
+        setShowNavbar(true);
+      }
+      setLastScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   return (
-    <div className="navbar">
-      {/* Logo */}
+    <div className={`navbar ${showNavbar ? "visible" : "hidden"}`}>
+    
       <Link to="/" className="logo-link">
         <img src={assets.logo} alt="logo" className="logo" />
-      </Link>
-
-      {/* Menu */}
+      </Link>  
       <ul className="navbar-menu">
         <Link
           to="/"
@@ -53,19 +69,15 @@ const Navbar = ({ setShowLogin }) => {
         >
           Blog
         </a>
-      </ul>
-
-      {/* Right Section */}
+      </ul>     
       <div className="navbar-right">
-        {/* Cart Icon */}
+        
         <Link to="/cart" className="navbar-search-icon">
           <FaShoppingCart className="icon" size={28} />
           {getTotalCartCount() > 0 && (
             <div className="cart-count">{getTotalCartCount()}</div>
           )}
         </Link>
-
-        {/* Profile Icon */}
         {!token ? (
           <button onClick={() => setShowLogin(true)}>Sign In</button>
         ) : (
@@ -84,3 +96,4 @@ const Navbar = ({ setShowLogin }) => {
 };
 
 export default Navbar;
+

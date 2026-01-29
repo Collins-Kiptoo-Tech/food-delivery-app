@@ -1,124 +1,377 @@
+/* ============================
+   SEARCH BAR - MODERN ENHANCEMENT
+============================ */
+
 .search-bar {
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 700px;
-  margin: 100px auto 20px auto;           
+  max-width: 750px;
+  margin: 170px auto 20px auto;
   padding: 12px 20px;
-  border-radius: 50px;               
-  background: #fffaf3;                 
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  border-radius: 60px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 10px 30px rgba(255, 140, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 2px solid rgba(255, 200, 100, 0.2);
   position: relative;
-  transition: box-shadow 0.3s ease;
-  margin-top: 170px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 100;
 }
 
 .search-bar:focus-within {
-  box-shadow: 0 8px 25px rgba(255,180,71,0.3); 
+  box-shadow: 
+    0 15px 40px rgba(255, 140, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 165, 0, 0.5);
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.98);
 }
 
-
+/* Search Icon with Animation */
 .search-icon {
-  font-size: 20px;
-  color: #8B4513;                      
-  margin-right: 12px;
+  font-size: 22px;
+  color: #ff8c00;
+  margin-right: 15px;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(255, 140, 0, 0.3));
 }
 
+.search-bar:focus-within .search-icon {
+  color: #ff6b00;
+  transform: scale(1.1);
+}
 
+/* Input Field */
 .search-bar input {
   flex: 1;
   border: none;
   outline: none;
   background: transparent;
   font-size: 16px;
-  color: #4a2c00;                 
+  color: #5a3800;
+  font-weight: 500;
+  padding: 8px 0;
+  font-family: 'Outfit', sans-serif;
 }
 
 .search-bar input::placeholder {
-  color: #a57c52;                     
-  font-style: italic;
+  color: #c1925e;
+  font-style: normal;
+  font-weight: 400;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
 }
 
+.search-bar input:focus::placeholder {
+  opacity: 0.4;
+}
 
+/* Animated Underline Effect */
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.search-input-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff8c00, #ff6b00);
+  transition: width 0.4s ease;
+  border-radius: 2px;
+}
+
+.search-bar:focus-within .search-input-wrapper::after {
+  width: 100%;
+}
+
+/* Search Button - Enhanced */
 .search-btn {
-  padding: 10px 20px;
-  margin-left: 10px;
+  padding: 12px 28px;
+  margin-left: 15px;
   border: none;
-  border-radius: 30px;
-  background: linear-gradient(135deg, #ffb347, #ffcc33);
-  color: #4a2c00;
-  font-weight: 600;
+  border-radius: 40px;
+  background: linear-gradient(135deg, #ff8c00, #ff5500);
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 
+    0 6px 20px rgba(255, 140, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.search-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent);
+  transition: left 0.7s ease;
 }
 
 .search-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(255,180,71,0.3);
+  transform: translateY(-3px);
+  box-shadow: 
+    0 10px 25px rgba(255, 140, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background: linear-gradient(135deg, #ff7b00, #ff4400);
 }
 
+.search-btn:hover::before {
+  left: 100%;
+}
 
+.search-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 5px 15px rgba(255, 140, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Suggestions Dropdown - Modern */
 .suggestions-dropdown {
   position: absolute;
-  top: 110%;
-  left: 0;
-  right: 0;
-  background: #fffaf3;                  
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-  margin-top: 10px;
-  max-height: none;                     
-  overflow-y: visible;                  
-  z-index: 100;
-  padding: 5px 0;
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 200, 100, 0.2);
+  margin-top: 5px;
+  z-index: 1000;
+  padding: 10px 0;
+  opacity: 0;
+  animation: fadeInDropdown 0.3s ease forwards;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
+@keyframes fadeInDropdown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
 
+/* Scrollbar for dropdown */
+.suggestions-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.suggestions-dropdown::-webkit-scrollbar-track {
+  background: rgba(255, 240, 220, 0.5);
+  border-radius: 4px;
+}
+
+.suggestions-dropdown::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #ff8c00, #ff5500);
+  border-radius: 4px;
+}
+
+/* Suggestion Items */
 .suggestion-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
+  gap: 15px;
+  padding: 14px 25px;
   cursor: pointer;
-  font-size: 14px;
-  color: #5a3a00;                      
-  transition: background 0.2s, transform 0.2s, font-weight 0.2s;
+  font-size: 15px;
+  color: #5a3800;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-left: 3px solid transparent;
+  position: relative;
+}
+
+.suggestion-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    rgba(255, 140, 0, 0.1), 
+    transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 0 12px 12px 0;
 }
 
 .suggestion-item:hover {
-  background-color: #ffebd6;
-  color: #8B4513;
+  background-color: rgba(255, 240, 220, 0.6);
+  color: #ff6b00;
   font-weight: 600;
-  transform: translateX(3px);
+  padding-left: 30px;
+  border-left-color: #ff8c00;
 }
 
+.suggestion-item:hover::before {
+  opacity: 1;
+}
 
+.suggestion-item:hover .suggestion-icon {
+  transform: scale(1.1);
+}
+
+/* Suggestion Images */
 .suggestion-item img {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
   object-fit: cover;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 200, 100, 0.3);
 }
 
+.suggestion-item:hover img {
+  box-shadow: 0 6px 18px rgba(255, 140, 0, 0.3);
+  border-color: rgba(255, 165, 0, 0.6);
+}
 
-@media (max-width: 600px) {
+/* Category Badge */
+.suggestion-category {
+  margin-left: auto;
+  font-size: 12px;
+  color: #c1925e;
+  background: rgba(255, 240, 220, 0.7);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.suggestion-item:hover .suggestion-category {
+  background: rgba(255, 140, 0, 0.15);
+  color: #ff6b00;
+}
+
+/* Price in Suggestions */
+.suggestion-price {
+  font-weight: 700;
+  color: #ff5500;
+  margin-left: 8px;
+}
+
+/* No Results Message */
+.no-results {
+  padding: 25px;
+  text-align: center;
+  color: #c1925e;
+  font-style: italic;
+  font-size: 15px;
+}
+
+/* Recent Searches Header */
+.recent-searches-header {
+  padding: 15px 25px 10px;
+  font-size: 13px;
+  color: #8b5a2b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255, 200, 100, 0.3);
+  margin-bottom: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .search-bar {
-    padding: 10px 15px;
+    max-width: 90%;
+    padding: 10px 18px;
+    margin: 150px auto 15px auto;
   }
-
+  
   .search-btn {
-    padding: 8px 15px;
+    padding: 10px 20px;
     font-size: 14px;
   }
+  
+  .suggestions-dropdown {
+    width: 90%;
+    left: 5%;
+    transform: translateX(0);
+  }
+  
+  @keyframes fadeInDropdown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
 
+@media (max-width: 480px) {
+  .search-bar {
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px;
+    border-radius: 20px;
+  }
+  
+  .search-input-wrapper {
+    width: 100%;
+  }
+  
+  .search-btn {
+    width: 100%;
+    margin-left: 0;
+    padding: 14px;
+  }
+  
   .suggestion-item {
-    font-size: 13px;
-    padding: 8px 15px;
+    padding: 12px 20px;
+    gap: 12px;
   }
-
+  
   .suggestion-item img {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
   }
+}
+
+/* Search Bar Glow Effect */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 
+      0 10px 30px rgba(255, 140, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    box-shadow: 
+      0 10px 40px rgba(255, 140, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+}
+
+.search-bar:not(:focus-within) {
+  animation: pulseGlow 4s infinite;
 }

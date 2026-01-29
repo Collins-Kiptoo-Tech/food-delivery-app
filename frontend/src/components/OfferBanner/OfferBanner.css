@@ -1,49 +1,183 @@
+/* ===========================
+   OFFER BANNER – CLEAN & CENTERED
+=========================== */
+
 .offer-banner {
-  background: linear-gradient(90deg, #ffb347, #ffcc33);
-  color: #4a2c00;
-  text-align: center;
-  padding: 40px 0; /* ⬆️ increased height */
-  position: relative;
   width: 100%;
+  background: linear-gradient(90deg, #ff6b6b, #ff8e53, #ff6b6b);
+  color: white;
+  text-align: center;
+  padding: 18px 20px;
+  position: relative;
   z-index: 10;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  animation: fadeInDown 1s ease;
-  border: 5px solid red;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+  animation: slideIn 0.8s ease-out;
+  margin: 0;
+  box-sizing: border-box;
 }
+
+/* Animated gradient background */
+.offer-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    transparent 30%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    transparent 70%);
+  animation: shimmer 3s infinite linear;
+  z-index: 1;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ===========================
+   CONTENT WRAPPER
+=========================== */
 
 .offer-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px; /* ⬆️ more spacing */
+  gap: 15px;
   flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
 }
 
+/* ===========================
+   TEXT STYLING
+=========================== */
+
 .offer-text {
-  font-size: 1.8rem; /* ⬆️ bigger text */
+  font-size: clamp(1rem, 1.8vw, 1.4rem);
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
   line-height: 1.4;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  margin: 0;
+  padding: 0;
 }
 
 .offer-text span {
-  color: #d46f00;
+  color: #fffacd;
   font-weight: 800;
+  position: relative;
+  display: inline-block;
+  animation: bounce 2s infinite;
 }
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+/* Delivery amount highlight */
+.offer-text span::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: white;
+  border-radius: 1px;
+  animation: underlinePulse 2s infinite;
+}
+
+@keyframes underlinePulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* ===========================
+   ICONS
+=========================== */
 
 .offer-icon {
-  color: #7a4b00;
-  width: 40px; /* ⬆️ bigger icons */
-  height: 40px;
-  animation: pulse 2s infinite;
+  width: 28px;
+  height: 28px;
+  color: white;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+  animation: float 3s ease-in-out infinite;
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
 
+/* Close button */
+.close-btn {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  z-index: 3;
+  padding: 0;
+  line-height: 1;
+}
 
-@keyframes fadeInDown {
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Timer badge */
+.timer-badge {
+  background: rgba(255, 255, 255, 0.9);
+  color: #ff6b6b;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  animation: pulse 2s infinite;
+  white-space: nowrap;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  }
+  50% { 
+    box-shadow: 0 3px 15px rgba(255, 107, 107, 0.3);
+  }
+}
+
+/* ===========================
+   ANIMATIONS
+=========================== */
+
+@keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
@@ -51,12 +185,81 @@
   }
 }
 
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
+/* ===========================
+   RESPONSIVE DESIGN
+=========================== */
+
+@media (max-width: 900px) {
+  .offer-banner {
+    padding: 15px 15px;
   }
-  50% {
-    transform: scale(1.2);
+  
+  .offer-content {
+    gap: 12px;
+    padding: 0 40px 0 15px;
+  }
+  
+  .offer-text {
+    font-size: 1rem;
+    text-align: left;
+  }
+  
+  .close-btn {
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+  }
+  
+  .timer-badge {
+    font-size: 0.8rem;
+    padding: 3px 10px;
   }
 }
 
+@media (max-width: 600px) {
+  .offer-banner {
+    padding: 12px 15px;
+  }
+  
+  .offer-content {
+    gap: 8px;
+    padding: 0 35px 0 10px;
+  }
+  
+  .offer-text {
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+  
+  .offer-icon {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .close-btn {
+    right: 8px;
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+  }
+  
+  .timer-badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+  }
+}
+
+@media (max-width: 400px) {
+  .offer-text {
+    font-size: 0.85rem;
+  }
+  
+  .offer-content {
+    justify-content: flex-start;
+  }
+  
+  .timer-badge {
+    display: none; /* Hide on very small screens */
+  }
+}

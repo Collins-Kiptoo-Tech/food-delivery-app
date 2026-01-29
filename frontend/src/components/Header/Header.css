@@ -1,156 +1,396 @@
 /* ===========================
-   HEADER MAIN STYLING
+   HEADER - MODERN REDESIGN
 =========================== */
 
 .header {
   position: relative;
-  height: 30vw;
   width: 100%;
+  height: clamp(420px, 40vw, 680px);
   margin: 0;
-  overflow: visible;
-  background: url("/header_img.png") no-repeat center center;
+  padding: 0;
+  overflow: hidden;
+  background: linear-gradient(135deg, 
+    rgba(40, 180, 99, 0.9) 0%, 
+    rgba(56, 163, 165, 0.85) 100%),
+    url("/header_img.png") no-repeat center center;
   background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-blend-mode: overlay;
+  border-radius: 0 0 30px 30px;
+  box-shadow: 0 10px 40px rgba(40, 180, 99, 0.25);
 }
 
-/* Ensure the image stays clean and uncluttered */
-.header::before,
-.header::after {
-  content: none;
+/* Animated gradient overlay */
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(45deg, 
+    transparent 30%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    transparent 70%);
+  animation: shimmer 8s infinite linear;
+  z-index: 1;
 }
 
-/* Wrapper for text and WhyChooseUs */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ===========================
+   CONTENT WRAPPER
+=========================== */
+
 .header-contents-wrapper {
   position: relative;
   width: 100%;
   height: 100%;
-}
-
-/* ===========================
-   LEFT TEXT CONTENT
-=========================== */
-.header-contents {
-  position: absolute;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 5%;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.5vw;
-  max-width: 50%;
-  bottom: 10%;
-  left: 6vw;
-  animation: fadeIn 3s;
+  align-items: center;
+  justify-content: space-between;
   z-index: 2;
 }
 
-.header-contents h2 {
+/* ===========================
+   LEFT CONTENT - MAIN MESSAGE
+=========================== */
+
+.header-contents {
+  flex: 1;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: slideInLeft 1s ease-out forwards;
+}
+
+/* Delivery Badge */
+.delivery-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.95);
+  color: #28b463;
+  font-size: clamp(0.85rem, 1vw, 1rem);
   font-weight: 700;
-  color: #fff8f0;
-  font-size: max(4.2vw, 30px);
-  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
-  line-height: 1.15;
-  letter-spacing: 0.3px;
-  background: linear-gradient(90deg, #ffe6b0, #fff);
+  padding: 8px 20px;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(40, 180, 99, 0.3);
+  margin-bottom: 10px;
+  width: fit-content;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Main Heading */
+.header-contents h1 {
+  font-weight: 800;
+  font-size: clamp(2.5rem, 4.5vw, 4rem);
+  line-height: 1.1;
+  color: white;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  margin: 0;
+}
+
+.header-contents h1 span {
+  background: linear-gradient(90deg, #fff, #ffeb3b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.header-contents p {
-  color: #f8f5ef;
-  font-size: max(1.1vw, 15px);
+/* Tagline */
+.tagline {
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  color: rgba(255, 255, 255, 0.95);
   line-height: 1.6;
-  max-width: 85%;
-  opacity: 0.95;
-  font-weight: 400;
-  letter-spacing: 0.2px;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-}
-.header-contents button {
-  background: linear-gradient(90deg, #ffb347, #ffcc33);
-  border: none;
-  color: #4a2c00;
-  font-weight: 600;
-  padding: 1vw 2.8vw;
-  border-radius: 40px;
-  font-size: max(1vw, 15px);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  margin: 10px 0 20px 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  max-width: 90%;
 }
 
-.header-contents button:hover {
-  background: linear-gradient(90deg, #ffd27f, #ffe680);
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-}
 /* ===========================
    WHY CHOOSE US (RIGHT SIDE)
 =========================== */
-.why-choose-us-side {
-  position: absolute;
-  top: 45%; /* ⬆️ Moved slightly higher from 58% → 50% */
-  right: 3.5%; /* ⬅️ Distance from the right edge */
-  transform: translateY(-50%);
-  z-index: 3;
-  transition: all 0.3s ease;
+
+.header-whychooseus {
+  flex: 0 0 380px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  animation: slideInRight 1s ease-out forwards;
 }
 
-/* Keep it anchored perfectly on zoom */
-@media (min-width: 1500px) {
-  .why-choose-us-side {
-    top: 47%; /* Adjusted for very large screens */
-    right: 4%;
-  }
+.whychooseus-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #28b463;
+  margin-bottom: 25px;
+  text-align: center;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.whychooseus-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #28b463, #38a3a5);
+  border-radius: 2px;
+}
+
+.benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(40, 180, 99, 0.1);
+}
+
+.benefit-item:hover {
+  transform: translateX(5px);
+  background: white;
+  box-shadow: 0 5px 15px rgba(40, 180, 99, 0.15);
+  border-color: rgba(40, 180, 99, 0.3);
+}
+
+.benefit-icon {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #28b463, #38a3a5);
+  color: white;
+  font-size: 1.2rem;
+}
+
+.benefit-content h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.benefit-content p {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  line-height: 1.5;
+  margin: 0;
 }
 
 /* ===========================
-   RESPONSIVE BEHAVIOR
+   ORDER BUTTON
 =========================== */
-@media (max-width: 1050px) {
-  .header {
-    height: 50vw;
-  }
 
-  .header-contents {
-    max-width: 60%;
-    bottom: 12%;
-  }
-
-  .why-choose-us-side {
-    position: static;
-    transform: none;
-    margin-top: 25px;
-  }
+.order-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 35px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, #ff9f43, #ff6b6b);
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+  width: fit-content;
+  margin-top: 10px;
+  text-decoration: none;
 }
 
-@media (max-width: 750px) {
-  .header {
-    height: 60vw;
-  }
+.order-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
+  background: linear-gradient(135deg, #ff8c32, #ff5252);
+}
 
-  .header-contents {
-    max-width: 80%;
-  }
+.order-button:active {
+  transform: translateY(-1px);
+}
 
-  .header-contents p {
-    display: none;
-  }
+.order-button::after {
+  content: '→';
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
 
-  .header-contents button {
-    padding: 2vw 4vw;
-  }
+.order-button:hover::after {
+  transform: translateX(5px);
 }
 
 /* ===========================
    ANIMATIONS
 =========================== */
-@keyframes fadeIn {
+
+@keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateX(-30px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* ===========================
+   RESPONSIVE DESIGN
+=========================== */
+
+@media (max-width: 1100px) {
+  .header-contents-wrapper {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 40px;
+    padding: 40px 5%;
+  }
+
+ 
+  .header-contents {
+    max-width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .tagline {
+    max-width: 100%;
+  }
+  
+  .header-whychooseus {
+    flex: none;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .benefit-item {
+    text-align: left;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    height: auto;
+    min-height: 500px;
+    border-radius: 0 0 20px 20px;
+  }
+  
+  .header-contents h1 {
+    font-size: 2.2rem;
+  }
+  
+  .tagline {
+    font-size: 1.1rem;
+  }
+  
+  .header-whychooseus {
+    padding: 25px;
+  }
+  
+  .whychooseus-title {
+    font-size: 1.5rem;
+  }
+  
+  .benefit-item {
+    padding: 12px;
+  }
+  
+  .order-button {
+    padding: 14px 30px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-contents h1 {
+    font-size: 1.8rem;
+  }
+  
+  .delivery-badge {
+    font-size: 0.8rem;
+    padding: 6px 15px;
+  }
+  
+  .header-whychooseus {
+    padding: 20px;
+  }
+  
+  .benefit-item {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+  
+  .benefit-content {
+    text-align: center;
+  }
+}
+
+/* Decorative Elements */
+.floating-element {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  backdrop-filter: blur(5px);
+  z-index: 1;
+  animation: float 6s ease-in-out infinite;
+}
+
+.floating-element:nth-child(1) {
+  top: 20%;
+  left: 5%;
+  width: 80px;
+  height: 80px;
+  animation-delay: 0s;
+}
+
+.floating-element:nth-child(2) {
+  bottom: 30%;
+  right: 10%;
+  width: 120px;
+  height: 120px;
+  animation-delay: 2s;
 }

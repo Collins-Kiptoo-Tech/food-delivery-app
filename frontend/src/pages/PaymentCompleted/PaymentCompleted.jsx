@@ -16,7 +16,7 @@ const PaymentCompleted = () => {
     <div className="payment-completed-page">
       {/* ✅ Success Header */}
       <h1>
-        Payment Completed <FaCheckCircle color="#28a745" />
+        Order Completed <FaCheckCircle color="#28a745" />
       </h1>
       <p>Your M-Pesa payment request has been sent successfully.</p>
 

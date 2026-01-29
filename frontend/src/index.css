@@ -1,32 +1,52 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
-*{
-  padding:0;
-  margin:0;
-  box-sizing:border-box;
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
   font-family: Outfit;
   scroll-behavior: smooth;
+  max-width: none !important; /* Add this line */
 }
 
-body{
+body {
   min-height: 100vh;
+  width: 100vw !important;    /* Change this */
+  max-width: 100vw !important; /* Add this */
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
 }
 
-a{
+a {
   text-decoration: none;
   color: inherit;
 }
 
-.app{
-  width: 80%;
-  margin: auto;
+/* FIXED - Remove width limit and centering */
+.app {
+  width: 100vw !important;     /* Changed from 80% */
+  max-width: 100vw !important; /* Added */
+  margin: 0 !important;        /* Changed from auto */
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+
+/* Ensure all children are full width */
+.app > * {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 @keyframes fadeIn {
-  0%{
+  0% {
     opacity: 0;
   }
-  100%{
+  100% {
     opacity: 1;
   }
 }

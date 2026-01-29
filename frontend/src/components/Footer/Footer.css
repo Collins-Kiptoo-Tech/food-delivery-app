@@ -1,6 +1,4 @@
-/* ============================
-   FOOTER STYLING
-============================ */
+
 
 .footer {
     color: white;
@@ -9,16 +7,16 @@
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    padding: 30px 5vw;  /* vertical + horizontal padding */
+    padding: 30px 5vw;  
     box-sizing: border-box;
-    margin-top: 0;      /* remove extra top margin */
+    margin-top: 0;     
 }
 
 .footer-content {
     width: 100%;
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr; /* left wider than center/right */
-    gap: 30px;                         /* space between columns */
+    grid-template-columns: 2fr 1fr 1fr; 
+    gap: 30px;                        
 }
 
 .footer-content-left,
@@ -27,10 +25,10 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;   /* spacing between items */
+    gap: 10px;   
 }
 
-/* Logo & description */
+
 .footer-content-left .footer-logo {
     height: 50px;
     margin-bottom: 10px;
@@ -42,7 +40,7 @@
     margin-bottom: 10px;
 }
 
-/* Social icons */
+
 .footer-social-icons {
     display: flex;
     gap: 10px;
@@ -58,14 +56,14 @@
     transform: scale(1.1);
 }
 
-/* Section headings */
+
 .footer-content-center h3,
 .footer-content-right h3 {
     margin-bottom: 6px;
     color: white;
 }
 
-/* Lists */
+
 .footer-content-center ul,
 .footer-content-right ul {
     list-style: none;
@@ -81,7 +79,7 @@
     cursor: pointer;
 }
 
-/* Links */
+
 .footer-content-center li a,
 .footer-content-left li a,
 .footer-content-right li a {
@@ -96,7 +94,7 @@
     color: #ff944d;
 }
 
-/* Divider */
+
 .footer hr {
     width: 100%;
     height: 1px;
@@ -105,16 +103,14 @@
     border: none;
 }
 
-/* Copyright */
+
 .footer p {
     font-size: 0.85rem;
     text-align: center;
     margin: 0;
 }
 
-/* ============================
-   RESPONSIVE
-============================ */
+
 
 @media (max-width: 900px) {
     .footer-content {

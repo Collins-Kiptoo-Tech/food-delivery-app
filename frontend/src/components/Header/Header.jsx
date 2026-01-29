@@ -17,7 +17,7 @@ const Header = () => {
           <button>Order Now 🍽️</button>
         </div>
 
-        {/* Right side: WhyChooseUs */}
+        
         <div className="header-whychooseus">
           <WhyChooseUs />
         </div>

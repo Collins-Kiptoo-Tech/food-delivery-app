@@ -1,6 +1,7 @@
-/* ============================
-   GLOBAL RESET
-============================ */
+
+
+
+/*
 *,
 *::before,
 *::after {
@@ -11,46 +12,40 @@
 
 html, body {
   width: 100%;
-  overflow-x: hidden; /* removes horizontal scroll */
+  overflow-x: hidden; 
   font-family: 'Poppins', sans-serif;
 }
 
-/* ============================
-   HOMEPAGE FULL BACKGROUND
-============================ */
+
 .homepage {
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #fff3e0, #ffddb3); /* warm gradient */
+  background: linear-gradient(135deg, #fff3e0, #ffddb3);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  overflow-x: hidden; /* ensures no horizontal scroll */
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   margin: 0;
   padding: 0;
 }
 
-/* ============================
-   INNER CONTAINER
-============================ */
+
 .inner-container {
   width: 100%;
-  max-width: 1300px;   /* content width for readability */
-  margin: 0 auto;
-  padding: 0 2rem;     /* inner padding */
-  box-sizing: border-box;
+  max-width: 100%;     
+  margin: 0;           
+  padding: 0;
 }
 
-/* ============================
-   FOOD DISPLAY SECTION
-============================ */
+
+
 .food-display {
   width: 100%;
   max-width: 100%;
   margin: 50px 0;
-  padding: 2rem 2rem;
+  padding: 0;
   background: transparent;
   box-sizing: border-box;
 }
@@ -62,7 +57,7 @@ html, body {
 }
 
 .food-item {
-  background: rgba(255, 255, 255, 0.85); /* semi-transparent for readability */
+  background: rgba(255, 255, 255, 0.85); 
   padding: 1rem;
   border-radius: 10px;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -73,9 +68,7 @@ html, body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* ============================
-   LOAD MORE BUTTON
-============================ */
+
 .load-more-container {
   display: flex;
   justify-content: center;
@@ -99,9 +92,7 @@ html, body {
   transform: translateY(-2px);
 }
 
-/* ============================
-   MENU HORIZONTAL (Explore + Why Choose Us)
-============================ */
+
 .menu-horizontal {
   display: flex;
   justify-content: space-between;
@@ -110,7 +101,7 @@ html, body {
   width: 100%;
   max-width: 100%;
   margin: 40px 0;
-  padding: 0 2rem;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -134,9 +125,7 @@ html, body {
   box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
 
-/* ============================
-   RESPONSIVE ADJUSTMENTS
-============================ */
+
 @media (max-width: 1024px) {
   .menu-horizontal {
     gap: 30px;
@@ -177,9 +166,7 @@ html, body {
   }
 }
 
-/* ============================
-   SMOOTH FADE-IN ANIMATION
-============================ */
+
 .menu-horizontal {
   animation: fadeIn 0.5s ease-in-out;
 }
@@ -196,3 +183,190 @@ html, body {
 }
 
 
+*/
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden; 
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* FIX FOR CENTERED CONTENT */
+.homepage {
+  width: 100vw;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fff3e0, #ffddb3);
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  left: 0;
+}
+
+/* REMOVE ALL MARGINS FROM ALL CHILDREN */
+.homepage > * {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box;
+}
+
+/* SPECIFIC FIX FOR FOOD DISPLAY */
+.food-display {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin: 50px 0 !important;
+  padding: 0 !important;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+/* MAKE GRID USE FULL WIDTH */
+.food-display-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 25px;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin: 0 !important;
+  padding: 0 20px !important; /* Small padding so items don't touch edges */
+  box-sizing: border-box;
+}
+
+.food-item {
+  background: rgba(255, 255, 255, 0.85); 
+  padding: 1rem;
+  border-radius: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.food-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.load-more-btn {
+  padding: 10px 25px;
+  background-color: #ffcc99;
+  border: none;
+  border-radius: 8px;
+  color: #4a2c00;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.load-more-btn:hover {
+  background-color: #ffb347;
+  transform: translateY(-2px);
+}
+
+.menu-horizontal {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin: 40px 0 !important;
+  padding: 0 20px !important; /* Small padding */
+  box-sizing: border-box;
+}
+
+.menu-horizontal > :first-child {
+  flex: 3;
+}
+
+.menu-horizontal > :last-child {
+  flex: 1;
+  min-width: 260px;
+  margin-top: 90px;
+  background: #fffdf8;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.menu-horizontal > :last-child:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 1024px) {
+  .menu-horizontal {
+    gap: 30px;
+  }
+  .menu-horizontal > :last-child {
+    margin-top: 70px;
+  }
+}
+
+@media (max-width: 900px) {
+  .menu-horizontal {
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    padding: 0 1.5rem !important;
+  }
+
+  .menu-horizontal > :first-child,
+  .menu-horizontal > :last-child {
+    width: 100%;
+    margin-top: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .food-display {
+    padding: 1.5rem !important;
+  }
+
+  .food-display-list {
+    gap: 20px;
+    padding: 0 10px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .food-display-list {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+.menu-horizontal {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

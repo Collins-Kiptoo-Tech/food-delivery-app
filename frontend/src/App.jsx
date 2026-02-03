@@ -16,7 +16,7 @@ const App = () => {
   const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
 
-  // ✅ Define routes where Navbar and Footer should be hidden
+ 
   const hideNavbarFooterRoutes = [
     "/payment-completed",
     "/order",

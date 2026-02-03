@@ -1,13 +1,13 @@
 /* ============================
-   NAVBAR SECTION – FULL WIDTH FIX (COMPACT + HIDE ON SCROLL)
+   NAVBAR – MODERN, FULL-WIDTH, COMPACT
 ============================ */
 
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw; /* full viewport width */
-  margin-left: calc(-50vw + 50%);
+  right: 0;
+  width: 100%;
   background: linear-gradient(90deg, #fff8f0, #ffe6cc);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   display: flex;
@@ -17,23 +17,28 @@
   z-index: 999;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   box-sizing: border-box;
-  transition: top 0.3s ease; /* smooth hide/show on scroll */
+  transition: top 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Navbar visibility classes */
+/* Navbar hide/show on scroll */
 .navbar.visible {
   top: 0;
 }
 
 .navbar.hidden {
-  top: -100px; /* hide above viewport, adjust if navbar taller */
+  top: -80px; /* adjust to navbar height */
 }
 
 /* Logo */
 .logo {
   flex: 0 0 auto;
-  width: 120px; /* compact size */
+  width: 120px;
   cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
 }
 
 /* Menu Section */
@@ -42,16 +47,16 @@
   align-items: center;
   justify-content: center;
   flex: 1 1 auto;
-  gap: 16px; /* reduced spacing */
+  gap: 18px;
   list-style: none;
   min-width: 0;
   flex-wrap: nowrap;
   overflow-x: auto;
-  scrollbar-width: none; /* hide scrollbar in Firefox */
+  scrollbar-width: none; /* Firefox */
 }
 
 .navbar-menu::-webkit-scrollbar {
-  display: none; /* hide scrollbar in Chrome/Safari */
+  display: none; /* Chrome/Safari */
 }
 
 .navbar-menu a,
@@ -60,16 +65,17 @@
   color: #4a4a4a;
   font-size: 15px;
   white-space: nowrap;
-  padding: 4px 8px; /* compact padding */
-  border-radius: 5px;
-  transition: all 0.2s ease;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
 }
 
 .navbar-menu a:hover,
 .navbar-menu a.active {
   color: #ff6600;
   font-weight: 600;
-  background-color: #fff3e6;
+  background-color: rgba(255, 102, 0, 0.1);
+  transform: scale(1.05);
 }
 
 /* Right Side (Icons + Button) */
@@ -77,17 +83,16 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 25px; /* compact spacing */
+  gap: 20px;
   flex: 0 0 auto;
-  margin-right: 40px;
 }
 
 /* Icons */
 .navbar-right .icon {
   color: #4a4a4a;
   cursor: pointer;
-  font-size: 24px; /* slightly smaller */
-  transition: all 0.2s ease;
+  font-size: 22px;
+  transition: all 0.3s ease;
 }
 
 .navbar-right .icon:hover {
@@ -98,14 +103,14 @@
 /* Sign In Button */
 .navbar-right button {
   background-color: #ff6600;
-  color: white;
+  color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 6px 14px; /* compact */
+  border-radius: 8px;
+  padding: 6px 16px;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .navbar-right button:hover {
@@ -152,17 +157,17 @@
   display: none;
   position: absolute;
   right: 0;
-  top: 110%;
+  top: 120%;
   background: #fff;
-  padding: 8px 16px;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  padding: 10px 16px;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   z-index: 999;
   opacity: 0;
-  transform: translateY(-6px);
-  transition: all 0.2s ease;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
 }
 
 .navbar-profile:hover .nav-profile-dropdown {
@@ -173,9 +178,9 @@
 
 .nav-profile-dropdown li {
   cursor: pointer;
-  padding: 4px 0;
+  padding: 6px 0;
   font-size: 14px;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
 }
 
 .nav-profile-dropdown li:hover {
@@ -193,10 +198,21 @@
   }
 
   .navbar-right .icon {
-    font-size: 22px;
+    font-size: 20px;
   }
 
   .logo {
     width: 100px;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar-menu {
+    display: none; /* hide menu for mobile, can add hamburger JS */
+  }
+
+  .navbar-right button {
+    padding: 5px 12px;
+    font-size: 14px;
   }
 }

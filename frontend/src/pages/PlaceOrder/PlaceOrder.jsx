@@ -3,7 +3,7 @@ import "./PlaceOrder.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FiUser, FiMail, FiMapPin, FiPhone } from "react-icons/fi";
+import { FiUser, FiMail, FiMapPin, FiPhone, FiShoppingCart, FiPackage, FiCreditCard, FiCheck } from "react-icons/fi";
 
 const PlaceOrder = () => {
   const { getTotalCartAmount, token, food_list, cartItems, url } =
@@ -24,7 +24,7 @@ const PlaceOrder = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const DELIVERY_FEE = 250;
+  const DELIVERY_FEE = 75;
 
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
@@ -39,7 +39,7 @@ const PlaceOrder = () => {
 
     if (!data.firstName.trim()) newErrors.firstName = "First name is required";
     if (!data.lastName.trim()) newErrors.lastName = "Last name is required";
-    if (!data.street.trim()) newErrors.street = "Street is required";
+    if (!data.street.trim()) newErrors.street = "Street address is required";
     if (!data.city.trim()) newErrors.city = "City is required";
     if (!data.zipcode.trim()) newErrors.zipcode = "Zip code is required";
     if (!data.country.trim()) newErrors.country = "Country is required";
@@ -77,12 +77,11 @@ const PlaceOrder = () => {
         headers: { token },
       });
       setLoading(false);
-      // PlaceOrder.jsx
       navigate("/payment-methods", { state: { orderData } });
     } catch (err) {
       console.error(err);
       setLoading(false);
-      setErrors({ form: "Something went wrong. Try again." });
+      setErrors({ form: "Something went wrong. Please try again." });
     }
   };
 
@@ -92,177 +91,303 @@ const PlaceOrder = () => {
     }
   }, [token, getTotalCartAmount, navigate]);
 
+  // Calculate total items in cart
+  const totalItems = Object.values(cartItems).reduce((a, b) => a + b, 0);
+
   return (
-    <div className="place-order-container">
-      <form onSubmit={placeOrder} className="place-order-form" noValidate>
-        {/* Left - Delivery Info */}
-        <div className="place-order-left card">
-          <h2 className="title">Delivery Information</h2>
-
-          <div className="input-group">
-            <FiUser className="input-icon" />
-            <input
-              name="firstName"
-              onChange={onChangeHandler}
-              value={data.firstName}
-              type="text"
-              placeholder="First Name"
-            />
-            {errors.firstName && (
-              <p className="error-text">{errors.firstName}</p>
-            )}
-          </div>
-
-          <div className="input-group">
-            <FiUser className="input-icon" />
-            <input
-              name="lastName"
-              onChange={onChangeHandler}
-              value={data.lastName}
-              type="text"
-              placeholder="Last Name"
-            />
-            {errors.lastName && <p className="error-text">{errors.lastName}</p>}
-          </div>
-
-          <div className="input-group">
-            <FiMail className="input-icon" />
-            <input
-              name="email"
-              onChange={onChangeHandler}
-              value={data.email}
-              type="email"
-              placeholder="Email Address"
-            />
-            {errors.email && <p className="error-text">{errors.email}</p>}
-          </div>
-
-          <div className="input-group">
-            <FiMapPin className="input-icon" />
-            <input
-              name="street"
-              onChange={onChangeHandler}
-              value={data.street}
-              type="text"
-              placeholder="Street Address"
-            />
-            {errors.street && <p className="error-text">{errors.street}</p>}
-          </div>
-
-          <div className="multi-fields">
-            <div className="input-group">
-              <FiMapPin className="input-icon" />
-              <input
-                name="city"
-                onChange={onChangeHandler}
-                value={data.city}
-                type="text"
-                placeholder="City"
-              />
-              {errors.city && <p className="error-text">{errors.city}</p>}
-            </div>
-
-            <div className="input-group">
-              <input
-                name="state"
-                onChange={onChangeHandler}
-                value={data.state}
-                type="text"
-                placeholder="State"
-              />
-            </div>
-          </div>
-
-          <div className="multi-fields">
-            <div className="input-group">
-              <input
-                name="zipcode"
-                onChange={onChangeHandler}
-                value={data.zipcode}
-                type="text"
-                placeholder="Zip Code"
-              />
-              {errors.zipcode && <p className="error-text">{errors.zipcode}</p>}
-            </div>
-
-            <div className="input-group">
-              <input
-                name="country"
-                onChange={onChangeHandler}
-                value={data.country}
-                type="text"
-                placeholder="Country"
-              />
-              {errors.country && <p className="error-text">{errors.country}</p>}
-            </div>
-          </div>
-
-          <div className="input-group">
-            <FiPhone className="input-icon" />
-            <input
-              name="phone"
-              onChange={onChangeHandler}
-              value={data.phone}
-              type="tel"
-              placeholder="Phone (2547XXXXXXXX)"
-            />
-            {errors.phone && <p className="error-text">{errors.phone}</p>}
-          </div>
-
-          {errors.form && <p className="error-text">{errors.form}</p>}
-
-          <p className="info-text">
-            After clicking &quot;Proceed to Payment&quot;, an M-Pesa prompt will
-            appear on your phone. Enter your PIN to complete payment.
-          </p>
+    <div className="place-order-page">
+      {/* Progress Steps */}
+      <div className="checkout-progress">
+        <div className="progress-step completed">
+          <div className="step-icon">1</div>
+          <span className="step-label">Cart</span>
         </div>
+        <div className="progress-line active"></div>
+        <div className="progress-step active">
+          <div className="step-icon">2</div>
+          <span className="step-label">Delivery</span>
+        </div>
+        <div className="progress-line"></div>
+        <div className="progress-step">
+          <div className="step-icon">3</div>
+          <span className="step-label">Payment</span>
+        </div>
+        <div className="progress-line"></div>
+        <div className="progress-step">
+          <div className="step-icon">4</div>
+          <span className="step-label">Complete</span>
+        </div>
+      </div>
 
-        {/* Right - Cart Totals */}
-        <div className="place-order-right card">
-          <h2>Cart Totals</h2>
+      <div className="place-order-container">
+        <h1 className="page-title">Delivery Information</h1>
+        <p className="page-subtitle">Please provide your delivery details to proceed</p>
 
-          {food_list.map((item) =>
-            cartItems[item._id] > 0 ? (
-              <div className="cart-item-summary" key={item._id}>
-                <img
-                  src={`${url}/uploads/${item.image}`} // <-- updated path
-                  alt={item.name}
-                  className="cart-thumb"
+        <form onSubmit={placeOrder} className="place-order-form" noValidate>
+          {/* Left - Delivery Form */}
+          <div className="delivery-section">
+            <div className="section-header">
+              <FiMapPin className="section-icon" />
+              <h2>Delivery Address</h2>
+            </div>
+            
+            <div className="form-grid">
+              <div className={`form-group ${errors.firstName ? 'error' : ''}`}>
+                <label htmlFor="firstName">
+                  <FiUser className="input-icon" />
+                  First Name *
+                </label>
+                <input
+                  id="firstName"
+                  name="firstName"
+                  onChange={onChangeHandler}
+                  value={data.firstName}
+                  type="text"
+                  placeholder="Enter your first name"
+                  required
                 />
-
-                <span>
-                  {item.name} x {cartItems[item._id]}
-                </span>
-                <b>KES {item.price * cartItems[item._id]}</b>
+                {errors.firstName && (
+                  <span className="error-message">{errors.firstName}</span>
+                )}
               </div>
-            ) : null
-          )}
 
-          <hr />
+              <div className={`form-group ${errors.lastName ? 'error' : ''}`}>
+                <label htmlFor="lastName">
+                  <FiUser className="input-icon" />
+                  Last Name *
+                </label>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  onChange={onChangeHandler}
+                  value={data.lastName}
+                  type="text"
+                  placeholder="Enter your last name"
+                  required
+                />
+                {errors.lastName && (
+                  <span className="error-message">{errors.lastName}</span>
+                )}
+              </div>
 
-          <div className="cart-total-details">
-            <p>Subtotal</p>
-            <p>KES {getTotalCartAmount()}</p>
-          </div>
-          <div className="cart-total-details">
-            <p>Delivery Fee</p>
-            <p>KES {getTotalCartAmount() === 0 ? 0 : DELIVERY_FEE}</p>
-          </div>
-          <div className="cart-total-details total">
-            <p>Total</p>
-            <b>
-              KES{" "}
-              {getTotalCartAmount() === 0
-                ? 0
-                : getTotalCartAmount() + DELIVERY_FEE}
-            </b>
+              <div className={`form-group ${errors.email ? 'error' : ''}`}>
+                <label htmlFor="email">
+                  <FiMail className="input-icon" />
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  onChange={onChangeHandler}
+                  value={data.email}
+                  type="email"
+                  placeholder="your@email.com"
+                />
+                {errors.email && (
+                  <span className="error-message">{errors.email}</span>
+                )}
+              </div>
+
+              <div className={`form-group ${errors.phone ? 'error' : ''}`}>
+                <label htmlFor="phone">
+                  <FiPhone className="input-icon" />
+                  Phone Number *
+                </label>
+                <input
+                  id="phone"
+                  name="phone"
+                  onChange={onChangeHandler}
+                  value={data.phone}
+                  type="tel"
+                  placeholder="2547XXXXXXXX"
+                  required
+                />
+                {errors.phone && (
+                  <span className="error-message">{errors.phone}</span>
+                )}
+              </div>
+
+              <div className="form-group full-width">
+                <label htmlFor="street">
+                  <FiMapPin className="input-icon" />
+                  Street Address *
+                </label>
+                <input
+                  id="street"
+                  name="street"
+                  onChange={onChangeHandler}
+                  value={data.street}
+                  type="text"
+                  placeholder="Enter your street address"
+                  required
+                />
+                {errors.street && (
+                  <span className="error-message">{errors.street}</span>
+                )}
+              </div>
+
+              <div className={`form-group ${errors.city ? 'error' : ''}`}>
+                <label htmlFor="city">City *</label>
+                <input
+                  id="city"
+                  name="city"
+                  onChange={onChangeHandler}
+                  value={data.city}
+                  type="text"
+                  placeholder="Enter city"
+                  required
+                />
+                {errors.city && (
+                  <span className="error-message">{errors.city}</span>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="state">State / Province</label>
+                <input
+                  id="state"
+                  name="state"
+                  onChange={onChangeHandler}
+                  value={data.state}
+                  type="text"
+                  placeholder="State"
+                />
+              </div>
+
+              <div className={`form-group ${errors.zipcode ? 'error' : ''}`}>
+                <label htmlFor="zipcode">Zip Code *</label>
+                <input
+                  id="zipcode"
+                  name="zipcode"
+                  onChange={onChangeHandler}
+                  value={data.zipcode}
+                  type="text"
+                  placeholder="Enter zip code"
+                  required
+                />
+                {errors.zipcode && (
+                  <span className="error-message">{errors.zipcode}</span>
+                )}
+              </div>
+
+              <div className={`form-group ${errors.country ? 'error' : ''}`}>
+                <label htmlFor="country">Country *</label>
+                <input
+                  id="country"
+                  name="country"
+                  onChange={onChangeHandler}
+                  value={data.country}
+                  type="text"
+                  placeholder="Enter country"
+                  required
+                />
+                {errors.country && (
+                  <span className="error-message">{errors.country}</span>
+                )}
+              </div>
+            </div>
+
+            {errors.form && (
+              <div className="form-error">
+                <span className="error-icon">⚠</span>
+                {errors.form}
+              </div>
+            )}
+
+            <div className="delivery-note">
+              <FiPackage className="note-icon" />
+              <div>
+                <p className="note-title">Delivery Information</p>
+                <p className="note-text">
+                  After completing your order, you'll be redirected to select your payment method.
+                  We'll send you order updates via SMS and email.
+                </p>
+              </div>
+            </div>
           </div>
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Processing..." : "PROCEED TO PAYMENT"}
-          </button>
-        </div>
-      </form>
+          {/* Right - Order Summary */}
+          <div className="order-summary-section">
+            <div className="section-header">
+              <FiShoppingCart className="section-icon" />
+              <h2>Order Summary</h2>
+              <span className="item-count">{totalItems} items</span>
+            </div>
+
+            <div className="order-items">
+              {food_list.map((item) =>
+                cartItems[item._id] > 0 ? (
+                  <div className="order-item" key={item._id}>
+                    <img
+                      src={`${url}/uploads/${item.image}`}
+                      alt={item.name}
+                      className="item-image"
+                    />
+                    <div className="item-details">
+                      <h4 className="item-name">{item.name}</h4>
+                      <span className="item-quantity">× {cartItems[item._id]}</span>
+                    </div>
+                    <div className="item-price">
+                      KES {item.price * cartItems[item._id]}
+                    </div>
+                  </div>
+                ) : null
+              )}
+            </div>
+
+            <div className="order-totals">
+              <div className="total-row">
+                <span>Subtotal</span>
+                <span>KES {getTotalCartAmount()}</span>
+              </div>
+              <div className="total-row">
+                <span>Delivery Fee</span>
+                <span>KES {getTotalCartAmount() === 0 ? 0 : DELIVERY_FEE}</span>
+              </div>
+              <div className="total-divider"></div>
+              <div className="total-row grand-total">
+                <span>Total Amount</span>
+                <span className="grand-total-amount">
+                  KES {getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + DELIVERY_FEE}
+                </span>
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              className={`proceed-btn ${loading ? 'loading' : ''}`}
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span className="spinner"></span>
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <FiCreditCard className="btn-icon" />
+                  Proceed to Payment
+                </>
+              )}
+            </button>
+
+            <div className="security-note">
+              <FiCheck className="security-icon" />
+              <span>Your information is secure and encrypted</span>
+            </div>
+
+            <div className="back-to-cart">
+              <button 
+                type="button" 
+                className="back-btn"
+                onClick={() => navigate("/cart")}
+              >
+                ← Back to Cart
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

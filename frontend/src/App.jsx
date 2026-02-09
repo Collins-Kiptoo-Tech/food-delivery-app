@@ -21,6 +21,7 @@ const App = () => {
     "/payment-completed",
     "/order",
     "/payment-methods",
+    "/order-confirmation",
   ];
 
   const shouldHide = hideNavbarFooterRoutes.includes(location.pathname);
@@ -43,6 +44,7 @@ const App = () => {
           <Route path="/verify" element={<Verify />} />
           <Route path="/myorders" element={<MyOrders />} />
           <Route path="/payment-completed" element={<PaymentCompleted />} />
+            <Route path="/order-confirmation" element={<PaymentCompleted />} /> 
           <Route path="/blog" element={<Blog />} />
         </Routes>
       </div>

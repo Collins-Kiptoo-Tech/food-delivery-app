@@ -74,8 +74,12 @@ const PlaceOrder = () => {
       setLoading(true);
       setErrors({});
       await axios.post(url + "/api/order/place", orderData, {
-        headers: { token },
-      });
+  headers: { 
+    'Authorization': `Bearer ${token}`,  // ✅ CORRECT
+    'Content-Type': 'application/json'
+    
+  },
+});
       setLoading(false);
       navigate("/payment-methods", { state: { orderData } });
     } catch (err) {

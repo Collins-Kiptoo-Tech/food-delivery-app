@@ -60,7 +60,7 @@ const PaymentMethods = () => {
         // Wait 30 seconds for user to complete payment on phone
         setTimeout(() => {
           completeMPesaOrder(data);
-        }, 30000); // Wait 30 seconds for payment completion
+        }, 50000); // Wait 30 seconds for payment completion
 
       } catch (err) {
         console.error("Payment Error:", err);
@@ -259,12 +259,10 @@ const PaymentMethods = () => {
                     type="tel"
                     value={phone}
                     onChange={handlePhoneChange}
-                    placeholder="254708374149"
+                    placeholder="2547"
                     maxLength="12"
                   />
-                  <small className="phone-hint">
-                    Use test number: <strong>254708374149</strong> (PIN: 1234)
-                  </small>
+              
                 </div>
               )}
             </div>
@@ -321,9 +319,7 @@ const PaymentMethods = () => {
                 <p>Please enter your M-Pesa PIN on your phone.</p>
                 <div className="test-info">
                   <small>
-                    <strong>Sandbox Test Instructions:</strong><br />
-                    Phone: <strong>254708374149</strong><br />
-                    PIN: <strong>1234</strong><br />
+                   
                     Amount: <strong>KES {totalAmount}</strong>
                   </small>
                 </div>

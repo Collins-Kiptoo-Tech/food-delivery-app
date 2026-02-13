@@ -20,7 +20,7 @@ const ExploreMenu = ({ category, setCategory }) => {
     Chicken: "Chicken",
     Beef: "Beef",
     Fish: "Fish",
-    Sandwich: "Sandwich",
+    RiceDishes: "Rice Dishes",
     UgaliDishes: "Ugali Dishes",
     Pizza: "Pizza",
     Pasta: "Pasta",

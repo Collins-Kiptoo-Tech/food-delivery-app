@@ -36,7 +36,7 @@ const ExploreMenu = ({ category, setCategory }) => {
 
   // Get image for category by index
   const getCategoryImage = (index) => {
-    return images[index] || menu1; // fallback to first image
+    return images[index % images.length] || menu1;
   };
 
   const handleCategoryClick = (cat) => {
@@ -51,82 +51,55 @@ const ExploreMenu = ({ category, setCategory }) => {
   const totalDishes = food_list.length;
   const uniqueRestaurants = [...new Set(food_list.map(item => item.restaurant || "FreshFeast"))].length;
 
-  // Get top rated dishes
-  const topDishes = food_list
-    .sort((a, b) => (b.rating || 4) - (a.rating || 4))
-    .slice(0, 4);
-
   return (
     <div className="explore-menu" id="explore-menu">
-      <div className="menu-header">
-        <h1>Explore our menu</h1>
-        <p className="menu-description">
+      {/* Header Section */}
+      <div className="explore-header">
+        <span className="badge">MENU</span>
+        <h1>Explore Our <span className="highlight">Menu</span></h1>
+        <p className="subtitle">
           Choose from a diverse menu featuring a delectable array of dishes. 
-          Our mission is to satisfy your craving and elevate your dining experience, 
-          one delicious meal at a time.
+          Our mission is to satisfy your craving and elevate your dining experience.
         </p>
       </div>
 
-      {/* Stats Section - Larger & Prominent */}
-      <div className="stats-section">
-        <div className="stat-card">
-          <div className="stat-number">{totalDishes}+</div>
-          <div className="stat-label">DISHES</div>
+      {/* Stats Section */}
+      <div className="stats-container">
+        <div className="stat-item">
+          <span className="stat-value">{totalDishes}+</span>
+          <span className="stat-label">Dishes</span>
         </div>
-        <div className="stat-divider"></div>
-        <div className="stat-card">
-          <div className="stat-number">{uniqueRestaurants}</div>
-          <div className="stat-label">RESTAURANTS</div>
+        <div className="stat-item">
+          <span className="stat-value">{uniqueRestaurants}</span>
+          <span className="stat-label">Restaurants</span>
         </div>
-        <div className="stat-divider"></div>
-        <div className="stat-card">
-          <div className="stat-number">30min</div>
-          <div className="stat-label">AVG DELIVERY</div>
+        <div className="stat-item">
+          <span className="stat-value">30</span>
+          <span className="stat-label">Min Delivery</span>
         </div>
       </div>
 
-      {/* Categories Grid */}
-      <div className="categories-section">
-        <h3 className="section-title">Popular Categories</h3>
+      {/* Categories Section - ENLARGED IMAGES */}
+      <div className="categories-wrapper">
+        <div className="section-header">
+          <h2>Popular Categories</h2>
+          <p>Browse your favorite categories</p>
+        </div>
+        
         <div className="categories-grid">
           {categories.map((cat, index) => (
             <div
               key={index}
-              className={`category-card ${category === cat ? "active" : ""}`}
+              className={`category-item ${category === cat ? "active" : ""}`}
               onClick={() => handleCategoryClick(cat)}
             >
-              <div className="category-image-container">
+              <div className="category-icon">
                 <img
                   src={getCategoryImage(index)}
                   alt={cat}
-                  className="category-image"
                 />
               </div>
-              <h4 className="category-name">{categoryNameMap[cat] || cat}</h4>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Top Dishes Section */}
-      <div className="top-dishes-section">
-        <div className="section-header">
-          <h3 className="section-title">Top dishes for you</h3>
-          <button className="view-all-btn">
-            View All Categories →
-          </button>
-        </div>
-        <div className="dishes-grid">
-          {topDishes.map((dish, index) => (
-            <div key={index} className="dish-card">
-              <img src={dish.image} alt={dish.name} className="dish-image" />
-              <div className="dish-content">
-                <h4>{dish.name}</h4>
-                <div className="dish-details">
-                  <span className="dish-rating">⭐ {dish.rating || 4.5}</span>
-                  <span className="dish-price">KSh {dish.price}</span>
-                </div>
-              </div>
+              <span className="category-name">{categoryNameMap[cat] || cat}</span>
             </div>
           ))}
         </div>

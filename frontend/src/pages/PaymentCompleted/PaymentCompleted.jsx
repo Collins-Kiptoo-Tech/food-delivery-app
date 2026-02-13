@@ -19,6 +19,22 @@ const PaymentCompleted = () => {
 
   const totalAmount = calculateTotal();
 
+  // ✅ Get order ID from different possible formats
+  const getOrderId = () => {
+    if (order?.orderId) return order.orderId;
+    if (order?._id) return order._id;
+    if (order?.id) return order.id;
+    return order?.orderId || "COD-098033";
+  };
+
+  const orderId = getOrderId();
+
+  // ✅ Track order handler - Navigate to actual tracking page
+  const handleTrackOrder = () => {
+    // Navigate to the track order page with the order ID
+    navigate(`/track-order/${orderId}`);
+  };
+
   return (
     <div className="payment-completed">
       <div className="confirmation-container">
@@ -28,7 +44,7 @@ const PaymentCompleted = () => {
             <FiCheckCircle className="success-icon" />
           </div>
           <h1>Order Confirmed!</h1>
-          <p className="order-id">Order #{order?.orderId || "COD-098033"}</p>
+          <p className="order-id">Order #{orderId}</p>
           <p className="success-message">
             Your order has been received and is being prepared. We'll notify you when it's out for delivery.
           </p>
@@ -189,7 +205,7 @@ const PaymentCompleted = () => {
             <div className="action-buttons">
               <button 
                 className="track-order-btn"
-                onClick={() => alert("Order tracking feature coming soon!")}
+                onClick={handleTrackOrder} // ✅ Now navigates to actual tracking page
               >
                 <FiTruck /> Track My Order
               </button>

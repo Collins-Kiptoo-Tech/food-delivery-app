@@ -5,7 +5,7 @@ import { StoreContext } from "../../context/StoreContext";
 import axios from "axios";
 
 const LoginPopup = ({ setShowLogin }) => {
-  const { url, setToken } = useContext(StoreContext);
+  const { url, setToken, setUserData } = useContext(StoreContext); // Add setUserData
 
   const [currState, setCurrState] = useState("Sign Up");
   const [data, setData] = useState({ name: "", email: "", password: "" });
@@ -24,9 +24,27 @@ const LoginPopup = ({ setShowLogin }) => {
       console.log("LOGIN/REGISTER RESPONSE:", resData);
 
       if (resData.success) {
+        // Save token
         setToken(resData.token);
         localStorage.setItem("token", resData.token);
+        
+        // Save user ID
         localStorage.setItem("userId", resData.user._id);
+        
+        // Save user data (name and email)
+        const userData = {
+          name: resData.user.name,
+          email: resData.user.email
+        };
+        
+        // Save to context
+        setUserData(userData);
+        
+        // Save to localStorage
+        localStorage.setItem("user", JSON.stringify(userData));
+        
+        console.log("User data saved:", userData);
+        
         setShowLogin(false);
       } else {
         alert(resData.message);

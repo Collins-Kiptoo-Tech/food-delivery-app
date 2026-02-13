@@ -11,20 +11,23 @@ import MyOrders from "./pages/MyOrders/MyOrders";
 import PaymentCompleted from "./pages/PaymentCompleted/PaymentCompleted";
 import Blog from "./components/Blog/Blog.jsx";
 import PaymentMethods from "./pages/Payment methods/PaymentMethods.jsx";
+import TrackOrder from "./pages/TrackOrder/TrackOrder.jsx"; // ✅ 1. ADD THIS IMPORT
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
 
- 
   const hideNavbarFooterRoutes = [
     "/payment-completed",
     "/order",
     "/payment-methods",
     "/order-confirmation",
+    "/track-order", // ✅ 2. ADD THIS TO HIDE NAVBAR
   ];
 
-  const shouldHide = hideNavbarFooterRoutes.includes(location.pathname);
+  // ✅ 3. ALSO HIDE NAVBAR FOR ANY /track-order/ORDERID ROUTES
+  const shouldHide = hideNavbarFooterRoutes.includes(location.pathname) || 
+                    location.pathname.startsWith("/track-order/");
 
   return (
     <>
@@ -44,8 +47,10 @@ const App = () => {
           <Route path="/verify" element={<Verify />} />
           <Route path="/myorders" element={<MyOrders />} />
           <Route path="/payment-completed" element={<PaymentCompleted />} />
-            <Route path="/order-confirmation" element={<PaymentCompleted />} /> 
+          <Route path="/order-confirmation" element={<PaymentCompleted />} /> 
           <Route path="/blog" element={<Blog />} />
+          {/* ✅ 4. ADD THE TRACK ORDER ROUTE WITH DYNAMIC ORDER ID */}
+          <Route path="/track-order/:orderId" element={<TrackOrder />} />
         </Routes>
       </div>
 

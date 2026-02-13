@@ -10,11 +10,13 @@ const Navbar = ({ setShowLogin }) => {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  const { getTotalCartCount, token, setToken } = useContext(StoreContext);
+  const { getTotalCartCount, token, setToken, userData } = useContext(StoreContext);
   const navigate = useNavigate();
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("user");
     setToken("");
     navigate("/");
   };
@@ -84,9 +86,63 @@ const Navbar = ({ setShowLogin }) => {
           <div className="navbar-profile">
             <FaUserCircle className="icon profile-icon" size={28} />
             <ul className="nav-profile-dropdown">
-              <li onClick={() => navigate("/myorders")}>Orders</li>
-              <hr />
-              <li onClick={logout}>Logout</li>
+              {/* User Info Header - Shows real logged in user */}
+              <li className="dropdown-header">
+                <div className="user-info">
+                  <span className="user-name">{userData?.name || "User"}</span>
+                  <span className="user-email">{userData?.email || "user@email.com"}</span>
+                </div>
+              </li>
+              
+              {/* My Profile */}
+              <li onClick={() => navigate("/profile")} className="dropdown-item">
+                <span className="item-icon">👤</span>
+                <span>My Profile</span>
+              </li>
+              
+              {/* Orders */}
+              <li onClick={() => navigate("/myorders")} className="dropdown-item">
+                <span className="item-icon">📦</span>
+                <span>Orders</span>
+              </li>
+              
+              {/* Favorites */}
+              <li onClick={() => navigate("/favorites")} className="dropdown-item">
+                <span className="item-icon">❤️</span>
+                <span>Favorites</span>
+              </li>
+              
+              {/* Saved Addresses */}
+              <li onClick={() => navigate("/addresses")} className="dropdown-item">
+                <span className="item-icon">📍</span>
+                <span>Saved Addresses</span>
+              </li>
+              
+              {/* Payment Methods */}
+              <li onClick={() => navigate("/payment-methods")} className="dropdown-item">
+                <span className="item-icon">💳</span>
+                <span>Payment Methods</span>
+              </li>
+              
+              {/* Help & Support */}
+              <li onClick={() => navigate("/support")} className="dropdown-item">
+                <span className="item-icon">❓</span>
+                <span>Help & Support</span>
+              </li>
+              
+              {/* Settings */}
+              <li onClick={() => navigate("/settings")} className="dropdown-item">
+                <span className="item-icon">⚙️</span>
+                <span>Settings</span>
+              </li>
+              
+              <hr className="dropdown-divider" />
+              
+              {/* Logout */}
+              <li onClick={logout} className="dropdown-item logout">
+                <span className="item-icon">🚪</span>
+                <span>Logout</span>
+              </li>
             </ul>
           </div>
         )}
@@ -96,4 +152,3 @@ const Navbar = ({ setShowLogin }) => {
 };
 
 export default Navbar;
-

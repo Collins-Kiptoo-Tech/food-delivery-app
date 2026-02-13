@@ -149,7 +149,63 @@ const StoreContextProvider = (props) => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [cartItems, setCartItems] = useState({});
   const [food_list, setFoodList] = useState([]);
+  const [userData, setUserData] = useState(null);
   const url = "http://localhost:4000";
+
+  // ==================== USER DATA FUNCTIONS ====================
+
+  // Load user from localStorage
+  const loadUserFromLocalStorage = () => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUserData(parsedUser);
+        console.log("✅ Loaded user from localStorage:", parsedUser);
+      } catch (error) {
+        console.error("❌ Error parsing user data:", error);
+      }
+    }
+  };
+
+  // Fetch user data from backend
+  const fetchUserData = async () => {
+    try {
+      if (!token) {
+        console.log("⚠️ No token, cannot fetch user data");
+        loadUserFromLocalStorage(); // Fallback to localStorage
+        return;
+      }
+
+      console.log("🔄 Fetching user data with token...");
+      
+      const response = await axios.get(`${url}/api/user/profile`, {
+        headers: { token }
+      });
+      
+      console.log("📦 User data response:", response.data);
+      
+      if (response.data.success) {
+        const userDataFromServer = {
+          name: response.data.user.name,
+          email: response.data.user.email,
+          _id: response.data.user._id
+        };
+        
+        setUserData(userDataFromServer);
+        localStorage.setItem("user", JSON.stringify(userDataFromServer));
+        console.log("✅ User data set from server:", userDataFromServer);
+      } else {
+        console.log("⚠️ Backend fetch failed, using localStorage");
+        loadUserFromLocalStorage();
+      }
+    } catch (err) {
+      console.error("❌ Failed to fetch user data:", err);
+      loadUserFromLocalStorage(); // Fallback to localStorage on error
+    }
+  };
+
+  // ==================== ORDER FUNCTIONS ====================
 
   // Fetch user orders function
   const fetchUserOrders = async () => {
@@ -227,15 +283,20 @@ const StoreContextProvider = (props) => {
     }
   };
 
+  // ==================== FOOD FUNCTIONS ====================
+
   // Fetch food list from backend
   const fetchFoodList = async () => {
     try {
       const response = await axios.get(url + "/api/food/list");
       setFoodList(response.data.data);
+      console.log("✅ Food list loaded");
     } catch (err) {
       console.error("Failed to fetch food list:", err);
     }
   };
+
+  // ==================== CART FUNCTIONS ====================
 
   // Load cart from backend
   const loadCartData = async (tokenValue, userId) => {
@@ -246,6 +307,7 @@ const StoreContextProvider = (props) => {
         { headers: { token: tokenValue } }
       );
       setCartItems(response.data.cartData || {});
+      console.log("✅ Cart data loaded");
     } catch (err) {
       console.error("Failed to load cart:", err);
     }
@@ -325,7 +387,9 @@ const StoreContextProvider = (props) => {
     let total = 0;
     for (const itemId in cartItems) {
       const item = food_list.find((f) => f._id === itemId);
-      if (item) total += item.price * cartItems[itemId];
+      if (item && cartItems[itemId] > 0) {
+        total += item.price * cartItems[itemId];
+      }
     }
     return total;
   };
@@ -335,17 +399,47 @@ const StoreContextProvider = (props) => {
     return Object.values(cartItems).reduce((a, b) => a + b, 0);
   };
 
-  // Load food and cart on mount
+  // ==================== INITIALIZATION EFFECTS ====================
+
+  // Load food, cart, and user data on mount
   useEffect(() => {
+    console.log("🔄 Initializing app...");
+    
+    // Load food list
     fetchFoodList();
+
+    // Always try to load user from localStorage first (for instant display)
+    loadUserFromLocalStorage();
 
     const storedToken = localStorage.getItem("token");
     const storedUserId = localStorage.getItem("userId");
 
     if (storedToken && storedUserId) {
+      console.log("🔄 Token found, loading cart and user data...");
+      setToken(storedToken); // Ensure token is set in state
       loadCartData(storedToken, storedUserId);
+      // Try to fetch fresh user data from backend
+      fetchUserData();
     }
   }, []);
+
+  // Fetch user data when token changes (login/logout)
+  useEffect(() => {
+    if (token) {
+      console.log("🔄 Token changed, fetching user data...");
+      // Try to fetch fresh user data
+      fetchUserData();
+      // Also load from localStorage as fallback
+      loadUserFromLocalStorage();
+    } else {
+      console.log("🚪 No token, clearing user data");
+      setUserData(null);
+      localStorage.removeItem("user");
+      setCartItems({}); // Clear cart on logout
+    }
+  }, [token]);
+
+  // ==================== CONTEXT PROVIDER ====================
 
   return (
     <StoreContext.Provider
@@ -354,13 +448,14 @@ const StoreContextProvider = (props) => {
         cartItems,
         addToCart,
         removeFromCart,
-        clearCart, // Add this
+        clearCart,
         getTotalCartAmount,
         getTotalCartCount,
         url,
         token,
         setToken,
-        // Add these order-related functions
+        userData,
+        setUserData,
         fetchUserOrders,
         fetchOrderDetails,
         updateOrderStatus,

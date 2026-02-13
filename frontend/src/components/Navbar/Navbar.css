@@ -13,7 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 2vw; /* compact height */
+  padding: 8px 2vw;
   z-index: 999;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   box-sizing: border-box;
@@ -26,7 +26,7 @@
 }
 
 .navbar.hidden {
-  top: -80px; /* adjust to navbar height */
+  top: -80px;
 }
 
 /* Logo */
@@ -52,11 +52,11 @@
   min-width: 0;
   flex-wrap: nowrap;
   overflow-x: auto;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
 }
 
 .navbar-menu::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
+  display: none;
 }
 
 .navbar-menu a,
@@ -87,107 +87,272 @@
   flex: 0 0 auto;
 }
 
-/* Icons */
+/* ============================
+   ENHANCED ICON STYLES - CART & PROFILE
+============================ */
+
+/* Icon container for better effects */
 .navbar-right .icon {
   color: #4a4a4a;
   cursor: pointer;
-  font-size: 22px;
+  font-size: 24px;
   transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
-.navbar-right .icon:hover {
-  color: #ff6600;
-  transform: scale(1.2);
-}
-
-/* Sign In Button */
-.navbar-right button {
-  background-color: #ff6600;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 16px;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.navbar-right button:hover {
-  background-color: #e65c00;
-  transform: scale(1.05);
-}
-
-/* Cart Count Badge */
+/* Cart icon specific styling */
 .navbar-search-icon {
   position: relative;
   display: flex;
   align-items: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
 }
 
+.navbar-search-icon:hover {
+  background: rgba(255, 102, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.navbar-search-icon:hover .icon {
+  color: #ff6600;
+  filter: drop-shadow(0 4px 8px rgba(255, 102, 0, 0.3));
+  animation: bounce 0.5s ease;
+}
+
+/* Profile icon specific styling */
+.navbar-profile {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.navbar-profile:hover {
+  background: rgba(255, 102, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.navbar-profile:hover .profile-icon {
+  color: #ff6600;
+  filter: drop-shadow(0 4px 8px rgba(255, 102, 0, 0.3));
+  animation: bounce 0.5s ease;
+}
+
+/* Bounce animation */
+@keyframes bounce {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(10deg);
+  }
+  75% {
+    transform: rotate(-10deg);
+  }
+}
+
+/* Cart Count Badge - Enhanced */
 .cart-count {
   position: absolute;
-  top: -5px;
-  right: -5px;
-  background: #ff4d4d;
+  top: -2px;
+  right: -2px;
+  background: linear-gradient(135deg, #ff4d4d, #ff1a1a);
   color: white;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   font-size: 12px;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid white;
-  transition: all 0.2s ease;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(255, 77, 77, 0.4);
+  transition: all 0.3s ease;
+  z-index: 2;
 }
 
-.cart-count:hover {
+.navbar-search-icon:hover .cart-count {
   transform: scale(1.2);
-  background-color: #ff3333;
+  background: linear-gradient(135deg, #ff1a1a, #ff0000);
+  box-shadow: 0 4px 10px rgba(255, 0, 0, 0.5);
 }
 
-/* Profile Dropdown */
-.navbar-profile {
-  position: relative;
+/* Sign In Button */
+.navbar-right button {
+  background: linear-gradient(135deg, #ff6600, #ff8c00);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 8px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 102, 0, 0.3);
+  letter-spacing: 0.5px;
 }
 
+.navbar-right button:hover {
+  background: linear-gradient(135deg, #ff8c00, #ff6600);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(255, 102, 0, 0.4);
+}
+
+/* ============================
+   PROFILE DROPDOWN - UPDATED
+============================ */
+
+.profile-icon {
+  color: #4a4a4a;
+  transition: all 0.3s ease;
+  font-size: 26px;
+}
+
+/* Dropdown Menu */
 .nav-profile-dropdown {
-  display: none;
   position: absolute;
-  right: 0;
   top: 120%;
-  background: #fff;
-  padding: 10px 16px;
-  border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-  flex-direction: column;
-  gap: 10px;
-  z-index: 999;
+  right: 0;
+  background: white;
+  min-width: 260px;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  padding: 8px 0;
+  z-index: 1000;
   opacity: 0;
+  visibility: hidden;
   transform: translateY(-10px);
   transition: all 0.3s ease;
+  list-style: none;
+  border: 1px solid rgba(255, 102, 0, 0.1);
 }
 
 .navbar-profile:hover .nav-profile-dropdown {
-  display: flex;
   opacity: 1;
+  visibility: visible;
   transform: translateY(0);
 }
 
+/* Dropdown Items Base Style */
 .nav-profile-dropdown li {
-  cursor: pointer;
-  padding: 6px 0;
+  padding: 12px 18px;
   font-size: 14px;
-  transition: color 0.3s ease;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-left: 3px solid transparent;
 }
 
 .nav-profile-dropdown li:hover {
+  background-color: #fff4e5;
   color: #ff6600;
+  border-left-color: #ff6600;
+  padding-left: 22px;
 }
 
-/* Responsive Adjustments */
+/* Item Icon */
+.item-icon {
+  font-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  min-width: 28px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Dropdown Header */
+.dropdown-header {
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 16px 16px 0 0;
+  cursor: default;
+  padding: 18px 18px !important;
+  border-left: none !important;
+}
+
+.dropdown-header:hover {
+  background: linear-gradient(135deg, #f8f9fa, #ffffff) !important;
+  color: #333 !important;
+  padding-left: 18px !important;
+  border-left-color: transparent !important;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-name {
+  font-weight: 700;
+  color: #ff6600;
+  font-size: 16px;
+}
+
+.user-email {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Badge for counts */
+.badge {
+  background: linear-gradient(135deg, #ff6600, #ff8c00);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 30px;
+  margin-left: auto;
+  min-width: 28px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(255, 102, 0, 0.3);
+}
+
+/* Dropdown Divider */
+.dropdown-divider {
+  margin: 8px 0;
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #f0f0f0, transparent);
+}
+
+/* Logout special style */
+.dropdown-item.logout {
+  color: #dc3545;
+}
+
+.dropdown-item.logout:hover {
+  background: #ffebee !important;
+  color: #c82333 !important;
+  border-left-color: #dc3545 !important;
+}
+
+/* Remove any horizontal rules from previous styles */
+.nav-profile-dropdown hr {
+  display: block;
+  margin: 8px 0;
+  border: none;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Override the previous li:first-child and li:last-child styles */
+.nav-profile-dropdown li:first-child::before,
+.nav-profile-dropdown li:last-child::before {
+  content: none;
+}
+
+/* ============================
+   RESPONSIVE DESIGN
+============================ */
+
 @media (max-width: 900px) {
   .navbar {
     padding: 6px 12px;
@@ -198,21 +363,101 @@
   }
 
   .navbar-right .icon {
-    font-size: 20px;
+    font-size: 22px;
   }
 
   .logo {
     width: 100px;
   }
+  
+  .nav-profile-dropdown {
+    min-width: 220px;
+  }
+  
+  .nav-profile-dropdown li {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  
+  .user-name {
+    font-size: 14px;
+  }
+  
+  .user-email {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 750px) {
+  .nav-profile-dropdown {
+    right: -10px;
+    min-width: 200px;
+  }
 }
 
 @media (max-width: 600px) {
   .navbar-menu {
-    display: none; /* hide menu for mobile, can add hamburger JS */
+    display: none;
   }
 
   .navbar-right button {
-    padding: 5px 12px;
+    padding: 6px 18px;
     font-size: 14px;
   }
+  
+  .nav-profile-dropdown {
+    min-width: 180px;
+  }
+  
+  .nav-profile-dropdown li {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  
+  .item-icon {
+    font-size: 18px;
+    min-width: 24px;
+  }
+  
+  .navbar-right .icon {
+    font-size: 22px;
+  }
+  
+  .navbar-search-icon,
+  .navbar-profile {
+    padding: 6px;
+  }
+}
+
+/* Animation for dropdown */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar-profile:hover .nav-profile-dropdown {
+  animation: slideDown 0.3s ease forwards;
+}
+
+/* Pulse animation for cart when items added */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.cart-count:not(:empty) {
+  animation: pulse 0.5s ease;
 }

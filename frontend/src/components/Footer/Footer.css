@@ -1,126 +1,241 @@
-
+/* Footer.css - Updated and Compact */
 
 .footer {
-    color: white;
-    background-color: #323232;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    padding: 30px 5vw;  
-    box-sizing: border-box;
-    margin-top: 0;     
+  color: white;
+  background-color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 5vw 20px;
+  box-sizing: border-box;
+  margin-top: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .footer-content {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr; 
-    gap: 30px;                        
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+  max-width: 1200px;
 }
 
-.footer-content-left,
-.footer-content-center,
-.footer-content-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;   
+/* Left Section - Company Info */
+.footer-content-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
 }
 
-
-.footer-content-left .footer-logo {
-    height: 50px;
-    margin-bottom: 10px;
+.footer-content-left img {
+  width: 140px;
+  height: auto;
+  margin-bottom: 5px;
+  /* filter: brightness(0) invert(1); - Remove this line */
+ /* Makes logo white if needed */
 }
 
 .footer-content-left p {
-    font-size: 0.9rem;
-    line-height: 1.4;
-    margin-bottom: 10px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #b0b0b0;
+  margin-bottom: 5px;
+  max-width: 350px;
 }
 
+/* Middle Section - Company Links */
+.footer-content-center {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+}
 
+.footer-content-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+/* Headers */
+.footer-content-center h3,
+.footer-content-right h3 {
+  color: #ff6600;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.footer-content-center h3::after,
+.footer-content-right h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background-color: #ff6600;
+}
+
+/* Lists */
+.footer-content-center ul,
+.footer-content-right ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-content-center li,
+.footer-content-right li {
+  font-size: 0.9rem;
+  color: #d0d0d0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+/* Contact items with icons */
+.footer-content-right li:first-child::before {
+  content: "📞";
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.footer-content-right li:last-child::before {
+  content: "✉️";
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+/* Hover effects */
+.footer-content-center li:hover,
+.footer-content-right li:hover {
+  color: #ff6600;
+  transform: translateX(5px);
+}
+
+/* Social Icons */
 .footer-social-icons {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
 }
 
 .footer-social-icons img {
-    width: 30px;
-    cursor: pointer;
-    transition: transform 0.2s;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px;
+  box-sizing: content-box;
 }
 
 .footer-social-icons img:hover {
-    transform: scale(1.1);
+  transform: translateY(-3px);
+  background: #ff6600;
 }
 
-
-.footer-content-center h3,
-.footer-content-right h3 {
-    margin-bottom: 6px;
-    color: white;
+/* Divider */
+.footer hr {
+  width: 100%;
+  height: 1px;
+  margin: 30px 0 20px;
+  background: linear-gradient(90deg, transparent, #444, transparent);
+  border: none;
+  max-width: 1200px;
 }
 
-
-.footer-content-center ul,
-.footer-content-right ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+/* Copyright */
+.footer-copyright {
+  font-size: 0.85rem;
+  color: #888;
+  text-align: center;
+  margin: 0;
+  letter-spacing: 0.3px;
 }
 
+/* Remove any old styles that might conflict */
 .footer-content-left li,
-.footer-content-center li,
-.footer-content-right li {
-    margin-bottom: 6px;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
-
-
 .footer-content-center li a,
 .footer-content-left li a,
 .footer-content-right li a {
-    color: white;
-    text-decoration: none;
-    transition: color 0.2s;
+  color: inherit;
+  text-decoration: none;
 }
 
-.footer-content-center li a:hover,
-.footer-content-left li a:hover,
-.footer-content-right li a:hover {
-    color: #ff944d;
-}
-
-
-.footer hr {
-    width: 100%;
-    height: 1px;
-    margin: 15px 0;
-    background-color: grey;
-    border: none;
-}
-
-
-.footer p {
-    font-size: 0.85rem;
-    text-align: center;
-    margin: 0;
-}
-
-
-
+/* Responsive Design */
 @media (max-width: 900px) {
-    .footer-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 25px;
-    }
-    .footer-social-icons {
-        justify-content: center;
-    }
+  .footer {
+    padding: 30px 5vw 15px;
+  }
+
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 35px;
+  }
+
+  .footer-content-left,
+  .footer-content-center,
+  .footer-content-right {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .footer-content-left p {
+    max-width: 100%;
+  }
+
+  .footer-content-center h3::after,
+  .footer-content-right h3::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .footer-content-center li,
+  .footer-content-right li {
+    justify-content: center;
+  }
+
+  .footer-social-icons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 25px 4vw 15px;
+  }
+
+  .footer-content-left p {
+    font-size: 0.85rem;
+  }
+
+  .footer-content-center h3,
+  .footer-content-right h3 {
+    font-size: 1rem;
+  }
+
+  .footer-content-center li,
+  .footer-content-right li {
+    font-size: 0.85rem;
+  }
+
+  .footer-copyright {
+    font-size: 0.75rem;
+  }
 }

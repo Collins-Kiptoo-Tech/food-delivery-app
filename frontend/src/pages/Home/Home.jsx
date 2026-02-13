@@ -4,7 +4,6 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 import Header from "../../components/Header/Header";
 import ExploreMenu from "../../components/ExploreMenu/ExploreMenu";
 import FoodDisplay from "../../components/FoodDisplay/FoodDisplay";
-import AppDownload from "../../components/AppDownload/AppDownload";
 import Blog from "../../components/Blog/Blog";
 import OfferBanner from "../../components/OfferBanner/OfferBanner";
 
@@ -18,7 +17,6 @@ const Home = () => {
       <Header />
       <ExploreMenu category={category} setCategory={setCategory} />
       <FoodDisplay category={category} />
-      <AppDownload />
       <Blog />
     </div>
   );

@@ -2,6 +2,24 @@ import React, { useState, useContext, useEffect } from "react";
 import { StoreContext } from "../../context/StoreContext";
 import "./MyOrders.css";
 import { Link } from "react-router-dom";
+import { 
+  FiPackage, 
+  FiCheckCircle, 
+  FiClock, 
+  FiTruck, 
+  FiHome,
+  FiShoppingBag,
+  FiDollarSign,
+  FiSearch,
+  FiFilter,
+  FiCalendar,
+  FiMapPin,
+  FiCreditCard,
+  FiEye,
+  FiRefreshCw,
+  FiAlertCircle
+} from "react-icons/fi";
+import { FaPaypal } from "react-icons/fa";
 
 const MyOrders = () => {
   const { token, url } = useContext(StoreContext);
@@ -12,6 +30,8 @@ const MyOrders = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const ordersPerPage = 5;
 
   useEffect(() => {
@@ -88,7 +108,7 @@ const MyOrders = () => {
     setRetryCount(prev => prev + 1);
   };
 
-  // FIXED: Price formatting function
+  // Format price with proper conversion
   const formatPrice = (amount) => {
     if (amount === undefined || amount === null) return "KSh 0.00";
     
@@ -98,12 +118,10 @@ const MyOrders = () => {
     console.log(`Formatting amount: ${amount}, as number: ${numAmount}`);
     
     // Check if amount is in cents (common in payment systems)
-    // If amount > 1000 and looks like whole dollars/cents
     if (numAmount > 1000) {
-      // Check if it's likely in cents (ends with 00 or is very large)
       const amountStr = String(numAmount);
       if ((amountStr.endsWith('00') && amountStr.length > 4) || numAmount > 10000) {
-        numAmount = numAmount / 100; // Convert cents to shillings
+        numAmount = numAmount / 100;
         console.log(`Converted from cents: ${amount} -> ${numAmount}`);
       }
     }
@@ -114,13 +132,12 @@ const MyOrders = () => {
     })}`;
   };
 
-  // FIXED: Item price formatting
+  // Format item price
   const formatItemPrice = (price) => {
     if (price === undefined || price === null) return "KSh 0.00";
     
     let numPrice = Number(price);
     
-    // Similar logic for item prices
     if (numPrice > 500) {
       const priceStr = String(numPrice);
       if ((priceStr.endsWith('00') && priceStr.length > 3) || numPrice > 5000) {
@@ -129,6 +146,83 @@ const MyOrders = () => {
     }
     
     return `KSh ${numPrice.toFixed(2)}`;
+  };
+
+  // Get payment status with proper display
+  const getPaymentStatus = (order) => {
+    // Check various places where payment status might be stored
+    if (order.payment?.status === 'paid') {
+      return { 
+        text: 'Paid ✓', 
+        class: 'paid',
+        method: order.payment?.method || 'unknown',
+        icon: order.payment?.method === 'paypal' ? <FaPaypal /> : <FiCheckCircle />
+      };
+    }
+    
+    if (order.payment?.method === 'paypal') {
+      return { 
+        text: 'Paid via PayPal ✓', 
+        class: 'paid paypal-paid',
+        method: 'paypal',
+        icon: <FaPaypal />
+      };
+    }
+    
+    if (order.status === 'paid') {
+      return { 
+        text: 'Paid ✓', 
+        class: 'paid',
+        method: 'unknown',
+        icon: <FiCheckCircle />
+      };
+    }
+    
+    if (order.payment?.method === 'cash') {
+      return { 
+        text: 'Cash on Delivery', 
+        class: 'cod',
+        method: 'cash',
+        icon: <FiDollarSign />
+      };
+    }
+    
+    return { 
+      text: 'Payment Pending', 
+      class: 'unpaid',
+      method: 'pending',
+      icon: <FiClock />
+    };
+  };
+
+  // Get payment method display
+  const getPaymentMethod = (order) => {
+    if (order.payment?.method === 'paypal') {
+      return {
+        name: 'PayPal',
+        icon: <FaPaypal />,
+        class: 'paypal-method'
+      };
+    }
+    if (order.payment?.method === 'cash') {
+      return {
+        name: 'Cash on Delivery',
+        icon: <FiDollarSign />,
+        class: 'cash-method'
+      };
+    }
+    if (order.payment?.method === 'mpesa') {
+      return {
+        name: 'M-Pesa',
+        icon: <FiCreditCard />,
+        class: 'mpesa-method'
+      };
+    }
+    return {
+      name: order.payment?.method || 'Not specified',
+      icon: <FiCreditCard />,
+      class: 'unknown-method'
+    };
   };
 
   const getStatusColor = (status) => {
@@ -199,6 +293,18 @@ const MyOrders = () => {
     o.status.toLowerCase().includes('pending')
   ).length;
 
+  const paidCount = orders.filter(o => 
+    o.payment?.status === 'paid' || 
+    o.payment?.method === 'paypal' || 
+    o.status === 'paid'
+  ).length;
+
+  // Handle view details
+  const handleViewDetails = (order) => {
+    setSelectedOrder(order);
+    setShowDetailsModal(true);
+  };
+
   // Login required state
   if (!token) {
     return (
@@ -223,11 +329,11 @@ const MyOrders = () => {
       {error && !loading && (
         <div className="error-container">
           <div className="error-message">
-            <div className="error-icon">⚠️</div>
+            <FiAlertCircle className="error-icon" />
             <h3>Unable to Load Orders</h3>
             <p>{error}</p>
             <button onClick={handleRetry} className="retry-btn">
-              {retryCount > 0 ? `Try Again (${retryCount})` : 'Try Again'}
+              <FiRefreshCw /> {retryCount > 0 ? `Try Again (${retryCount})` : 'Try Again'}
             </button>
           </div>
         </div>
@@ -270,6 +376,13 @@ const MyOrders = () => {
                 <p className="stat-number">{deliveredCount}</p>
               </div>
             </div>
+            <div className="stat-card paid">
+              <span className="stat-icon">💰</span>
+              <div className="stat-content">
+                <h3>Paid</h3>
+                <p className="stat-number">{paidCount}</p>
+              </div>
+            </div>
             <div className="stat-card processing">
               <span className="stat-icon">⏳</span>
               <div className="stat-content">
@@ -277,18 +390,12 @@ const MyOrders = () => {
                 <p className="stat-number">{processingCount}</p>
               </div>
             </div>
-            <div className="stat-card pending">
-              <span className="stat-icon">🕒</span>
-              <div className="stat-content">
-                <h3>Pending</h3>
-                <p className="stat-number">{pendingCount}</p>
-              </div>
-            </div>
           </div>
 
           {/* Search and Filter Controls */}
           <div className="orders-controls">
             <div className="search-box">
+              <FiSearch className="search-icon" />
               <input
                 type="text"
                 placeholder="Search orders or items..."
@@ -300,20 +407,23 @@ const MyOrders = () => {
                 className="search-input"
               />
             </div>
-            <select 
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="filter-select"
-            >
-              <option value="all">All Status</option>
-              <option value="delivered">Delivered</option>
-              <option value="processing">Processing</option>
-              <option value="pending">Pending</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
+            <div className="filter-box">
+              <FiFilter className="filter-icon" />
+              <select 
+                value={statusFilter}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="filter-select"
+              >
+                <option value="all">All Status</option>
+                <option value="delivered">Delivered</option>
+                <option value="processing">Processing</option>
+                <option value="pending">Pending</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
           </div>
 
           {/* Orders Summary */}
@@ -324,104 +434,115 @@ const MyOrders = () => {
             </p>
           </div>
 
-
-
           {/* Orders List */}
           <div className="orders-list">
-            {currentOrders.map((order, index) => (
-              <div key={order._id || index} className="order-card">
-                <div className="order-header">
-                  <div className="order-info">
-                    <h3>Order {getOrderNumber(order._id)}</h3>
-                    <p className="order-date">
-                      <span className="date-icon">📅</span>
-                      {formatDate(order.createdAt || order.date)}
-                    </p>
-                    {order.address && (
-                      <p className="order-address">
-                        <span className="address-icon">📍</span>
-                        {typeof order.address === 'object' 
-                          ? `${order.address.street || ''}, ${order.address.city || ''}`.trim()
-                          : order.address}
+            {currentOrders.map((order, index) => {
+              const payment = getPaymentStatus(order);
+              const paymentMethod = getPaymentMethod(order);
+              
+              return (
+                <div key={order._id || index} className="order-card">
+                  <div className="order-header">
+                    <div className="order-info">
+                      <h3>Order {getOrderNumber(order._id)}</h3>
+                      <p className="order-date">
+                        <FiCalendar className="icon" />
+                        {formatDate(order.createdAt || order.date)}
                       </p>
-                    )}
+                      {order.address && (
+                        <p className="order-address">
+                          <FiMapPin className="icon" />
+                          {typeof order.address === 'object' 
+                            ? `${order.address.street || ''}, ${order.address.city || ''}`.trim()
+                            : order.address}
+                        </p>
+                      )}
+                    </div>
+                    <div className="order-status-group">
+                      <span className={`status-badge ${getStatusColor(order.status)}`}>
+                        {order.status || 'Pending'}
+                      </span>
+                      <span className={`payment-badge ${payment.class}`}>
+                        {payment.icon}
+                        {payment.text}
+                      </span>
+                      <span className={`payment-method-badge ${paymentMethod.class}`}>
+                        {paymentMethod.icon}
+                        {paymentMethod.name}
+                      </span>
+                    </div>
                   </div>
-                  <div className="order-status">
-                    <span className={`status-badge ${getStatusColor(order.status)}`}>
-                      {order.status || 'Pending'}
-                    </span>
-                    <span className={`payment-badge ${order.payment ? 'paid' : 'unpaid'}`}>
-                      {order.payment ? 'Paid' : 'Payment Pending'}
-                    </span>
-                  </div>
-                </div>
 
-                {order.items && order.items.length > 0 ? (
-                  <div className="order-items">
-                    {order.items.slice(0, 3).map((item, idx) => (
-                      <div key={idx} className="order-item">
-                        <div className="item-image">
-                          {item.image ? (
-                            <img 
-                              src={`${url}/images/${item.image}`} 
-                              alt={item.name} 
-                              onError={(e) => {
-                                e.target.src = 'https://via.placeholder.com/80x80?text=Food';
-                              }}
-                            />
-                          ) : (
-                            <div className="image-placeholder">🍔</div>
-                          )}
-                        </div>
-                        <div className="item-details">
-                          <h4>{item.name || `Item ${idx + 1}`}</h4>
-                          <div className="item-meta">
-                            <span className="item-quantity">Qty: {item.quantity || 1}</span>
-                            <span className="item-price">Price: {formatItemPrice(item.price)}</span>
-                            <span className="item-total">
-                              Total: {formatItemPrice((item.price || 0) * (item.quantity || 1))}
-                            </span>
+                  {order.items && order.items.length > 0 ? (
+                    <div className="order-items">
+                      {order.items.slice(0, 3).map((item, idx) => (
+                        <div key={idx} className="order-item">
+                          <div className="item-image">
+                            {item.image ? (
+                              <img 
+                                src={`${url}/images/${item.image}`} 
+                                alt={item.name} 
+                                onError={(e) => {
+                                  e.target.src = 'https://via.placeholder.com/80x80?text=Food';
+                                }}
+                              />
+                            ) : (
+                              <div className="image-placeholder">🍔</div>
+                            )}
+                          </div>
+                          <div className="item-details">
+                            <h4>{item.name || `Item ${idx + 1}`}</h4>
+                            <div className="item-meta">
+                              <span className="item-quantity">Qty: {item.quantity || 1}</span>
+                              <span className="item-price">Price: {formatItemPrice(item.price)}</span>
+                              <span className="item-total">
+                                Total: {formatItemPrice((item.price || 0) * (item.quantity || 1))}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                    
-                    {order.items.length > 3 && (
-                      <div className="more-items">
-                        + {order.items.length - 3} more item{order.items.length - 3 !== 1 ? 's' : ''}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="no-items">
-                    <p>No item details available</p>
-                  </div>
-                )}
+                      ))}
+                      
+                      {order.items.length > 3 && (
+                        <div className="more-items">
+                          + {order.items.length - 3} more item{order.items.length - 3 !== 1 ? 's' : ''}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="no-items">
+                      <p>No item details available</p>
+                    </div>
+                  )}
 
-                <div className="order-footer">
-                  <div className="order-total">
-                    <span className="total-label">Total Amount:</span>
-                    <span className="total-amount">{formatPrice(order?.amount)}</span>
-                  </div>
-                  <div className="order-actions">
-                    <button className="btn view-details-btn">
-                      View Details
-                    </button>
-                    {order.status?.toLowerCase().includes('delivered') && (
-                      <button className="btn reorder-btn">
-                        Reorder
+                  <div className="order-footer">
+                    <div className="order-total">
+                      <span className="total-label">Total Amount:</span>
+                      <span className="total-amount">{formatPrice(order.amount)}</span>
+                    </div>
+                    <div className="order-actions">
+                      <button 
+                        className="btn view-details-btn"
+                        onClick={() => handleViewDetails(order)}
+                      >
+                        <FiEye /> View Details
                       </button>
-                    )}
-                    {!order.status?.toLowerCase().includes('delivered') && 
-                     !order.status?.toLowerCase().includes('cancelled') && (
-                      <button className="btn track-btn">
-                        Track Order
-                      </button>
-                    )}
+                      {order.status?.toLowerCase().includes('delivered') && (
+                        <button className="btn reorder-btn">
+                          <FiRefreshCw /> Reorder
+                        </button>
+                      )}
+                      {!order.status?.toLowerCase().includes('delivered') && 
+                       !order.status?.toLowerCase().includes('cancelled') && (
+                        <button className="btn track-btn">
+                          <FiTruck /> Track Order
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Pagination */}
@@ -470,6 +591,130 @@ const MyOrders = () => {
             </div>
           )}
         </>
+      )}
+
+      {/* Order Details Modal */}
+      {showDetailsModal && selectedOrder && (
+        <div className="modal-overlay" onClick={() => setShowDetailsModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Order Details {getOrderNumber(selectedOrder._id)}</h2>
+              <button className="close-btn" onClick={() => setShowDetailsModal(false)}>×</button>
+            </div>
+            
+            <div className="modal-body">
+              <div className="modal-section">
+                <h3><FiShoppingBag /> Order Information</h3>
+                <div className="info-grid">
+                  <div className="info-row">
+                    <span className="info-label">Order ID:</span>
+                    <span className="info-value">{selectedOrder._id}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">Date:</span>
+                    <span className="info-value">{formatDate(selectedOrder.createdAt || selectedOrder.date)}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">Status:</span>
+                    <span className={`status-badge ${getStatusColor(selectedOrder.status)}`}>
+                      {selectedOrder.status || 'Pending'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-section">
+                <h3><FiCreditCard /> Payment Information</h3>
+                <div className="info-grid">
+                  <div className="info-row">
+                    <span className="info-label">Method:</span>
+                    <span className={`payment-method-badge ${getPaymentMethod(selectedOrder).class}`}>
+                      {getPaymentMethod(selectedOrder).icon}
+                      {getPaymentMethod(selectedOrder).name}
+                    </span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">Status:</span>
+                    <span className={`payment-badge ${getPaymentStatus(selectedOrder).class}`}>
+                      {getPaymentStatus(selectedOrder).icon}
+                      {getPaymentStatus(selectedOrder).text}
+                    </span>
+                  </div>
+                  {selectedOrder.payment?.transactionId && (
+                    <div className="info-row">
+                      <span className="info-label">Transaction ID:</span>
+                      <span className="info-value transaction-id">{selectedOrder.payment.transactionId}</span>
+                    </div>
+                  )}
+                  {selectedOrder.payment?.email && (
+                    <div className="info-row">
+                      <span className="info-label">PayPal Email:</span>
+                      <span className="info-value">{selectedOrder.payment.email}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="modal-section">
+                <h3><FiMapPin /> Delivery Address</h3>
+                <div className="address-details">
+                  {selectedOrder.address && (
+                    <>
+                      <p>{selectedOrder.address.firstName} {selectedOrder.address.lastName}</p>
+                      <p>{selectedOrder.address.street}</p>
+                      <p>{selectedOrder.address.city}, {selectedOrder.address.state} {selectedOrder.address.zipcode}</p>
+                      <p>{selectedOrder.address.country}</p>
+                      <p>Phone: {selectedOrder.address.phone}</p>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="modal-section">
+                <h3><FiPackage /> Items</h3>
+                <div className="modal-items-list">
+                  {selectedOrder.items?.map((item, idx) => (
+                    <div className="modal-item" key={idx}>
+                      <div className="modal-item-info">
+                        <span className="modal-item-name">{item.name}</span>
+                        <span className="modal-item-quantity">× {item.quantity}</span>
+                      </div>
+                      <span className="modal-item-price">{formatItemPrice(item.price * item.quantity)}</span>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="modal-totals">
+                  <div className="modal-total-row">
+                    <span>Subtotal</span>
+                    <span>{formatPrice(selectedOrder.amount - 250)}</span>
+                  </div>
+                  <div className="modal-total-row">
+                    <span>Delivery Fee</span>
+                    <span>KSh 250.00</span>
+                  </div>
+                  <div className="modal-total-divider"></div>
+                  <div className="modal-total-row grand-total">
+                    <span>Total</span>
+                    <span className="total-amount">{formatPrice(selectedOrder.amount)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button className="modal-btn close" onClick={() => setShowDetailsModal(false)}>
+                Close
+              </button>
+              {!selectedOrder.status?.toLowerCase().includes('delivered') && 
+               !selectedOrder.status?.toLowerCase().includes('cancelled') && (
+                <button className="modal-btn track">
+                  <FiTruck /> Track Order
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

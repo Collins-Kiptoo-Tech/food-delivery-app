@@ -126,15 +126,15 @@ const PaymentCompleted = () => {
                 <div className="detail-row">
                   <span className="detail-label">Payment Method:</span>
                   <span className={`detail-value payment-method ${paymentMethod || "cash"}`}>
-                    {paymentMethod === "mpesa" ? "M-Pesa" : "Cash on Delivery"}
-                  </span>
+  {paymentMethod === "paypal" ? "PayPal" : paymentMethod === "mpesa" ? "M-Pesa" : "Cash on Delivery"}
+</span>
                 </div>
                 
                 <div className="detail-row">
                   <span className="detail-label">Status:</span>
-                  <span className={`status-badge ${paymentMethod === "mpesa" ? "paid" : "pending"}`}>
-                    {paymentMethod === "mpesa" ? "Paid ✓" : "Pay on Delivery"}
-                  </span>
+                  <span className={`status-badge ${paymentMethod === "paypal" || paymentMethod === "mpesa" ? "paid" : "pending"}`}>
+  {paymentMethod === "paypal" || paymentMethod === "mpesa" ? "Paid ✓" : "Pay on Delivery"}
+</span>
                 </div>
                 
                 {paymentMethod === "mpesa" && order?.payment?.transactionCode && (

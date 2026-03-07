@@ -150,7 +150,7 @@ const StoreContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const [food_list, setFoodList] = useState([]);
   const [userData, setUserData] = useState(null);
-  const url = "http://localhost:4000";
+  const url = import.meta.env.VITE_API_URL || "https://food-delivery-app-ecg7.onrender.com";
 
   // ==================== USER DATA FUNCTIONS ====================
 

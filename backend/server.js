@@ -19,7 +19,11 @@ const port = process.env.PORT || 4000
 //middleware 
 app.use(express.json())
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5174'],
+  origin: ['http://localhost:5173',
+     'http://localhost:3000',
+      'http://localhost:5174',
+    'https://food-delivery-app-frontend-dehm.onrender.com'
+],
   credentials: true
 })) // Enable CORS for your React app
 

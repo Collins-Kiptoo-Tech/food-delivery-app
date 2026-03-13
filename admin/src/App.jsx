@@ -16,50 +16,37 @@ import "./App.css";
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
-  console.log("📍 ProtectedRoute - Token:", token ? "YES ✅" : "NO ❌");
-  
   if (!token) {
-    console.log("📍 ProtectedRoute - No token, redirecting to login");
     return <Navigate to="/login" replace />;
   }
   return children;
 };
 
 // Layout component
-const AdminLayout = ({ url }) => {
-  console.log("📍 AdminLayout - Rendering with token present");
-  
-  return (
-    <div>
-      <Navbar />
-      <hr />
-      <div style={{ display: 'flex' }}>
-        <Sidebar />
-        <div style={{ flex: 1, padding: '20px' }}>
-          <Routes>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/add-category" element={<AddCategory url={url} />} />
-            <Route path="/add" element={<Add url={url} />} />
-            <Route path="/list" element={<List url={url} />} />
-            <Route path="/orders" element={<Orders url={url} />} />
-            <Route path="/restaurants" element={<Restaurants />} />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-        </div>
+const AdminLayout = ({ url }) => (
+  <div>
+    <Navbar />
+    <hr />
+    <div style={{ display: 'flex' }}>
+      <Sidebar />
+      <div style={{ flex: 1, padding: '20px' }}>
+        <Routes>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/add-category" element={<AddCategory url={url} />} />
+          <Route path="/add" element={<Add url={url} />} />
+          <Route path="/list" element={<List url={url} />} />
+          <Route path="/orders" element={<Orders url={url} />} />
+          <Route path="/restaurants" element={<Restaurants />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 const App = () => {
   const url = "http://localhost:4000";
   const token = localStorage.getItem('token');
-  
-  console.log("📍 App.jsx - Initial render");
-  console.log("📍 App.jsx - Token from localStorage:", token ? "YES ✅" : "NO ❌");
-  if (token) {
-    console.log("📍 App.jsx - Token preview:", token.substring(0, 20) + "...");
-  }
 
   return (
     <div>

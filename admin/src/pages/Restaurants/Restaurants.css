@@ -1,0 +1,433 @@
+/* Restaurants.css - Full Width Fixed Version */
+
+.restaurants {
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+}
+
+.flex-col {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  width: 95%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header Section */
+.add-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.add-header h3 {
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.add-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+/* Form Styling - 2 Column Layout */
+form.flex-col {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #e2e8f0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+/* Full width elements */
+.add-img-upload,
+.add-product-description,
+.cuisine-section,
+button[type="submit"] {
+  grid-column: span 2;
+}
+
+.add-img-upload {
+  text-align: center;
+  padding: 15px;
+  border: 2px dashed #cbd5e0;
+  border-radius: 8px;
+  background: white;
+}
+
+.add-img-upload p {
+  color: #4a5568;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.add-img-upload input[type="file"] {
+  font-size: 14px;
+  width: 100%;
+  padding: 8px;
+}
+
+.add-product-name,
+.add-product-description {
+  margin-bottom: 0;
+}
+
+.add-product-name p,
+.add-product-description p,
+.cuisine-section p {
+  color: #4a5568;
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.add-product-name input,
+.add-product-description textarea,
+.cuisine-section input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.add-product-name input:focus,
+.add-product-description textarea:focus,
+.cuisine-section input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.add-product-description textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Table Styling */
+.list-table {
+  background: white;
+  border-radius: 10px;
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  margin-top: 20px;
+}
+
+.list-table-format {
+  display: grid;
+  grid-template-columns: 1.5fr 2fr 1.2fr 1.5fr 0.8fr 1.8fr;
+  padding: 12px 15px;
+  align-items: center;
+  border-bottom: 1px solid #edf2f7;
+  min-width: 900px;
+  gap: 10px;
+}
+
+.list-table-format.title {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  padding: 15px;
+  border-radius: 8px 8px 0 0;
+}
+
+.list-table-format.title b {
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.list-table-format p {
+  color: #4a5568;
+  margin: 0;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+/* Status Badge */
+.list-table-format p span {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Actions Buttons */
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.edit-btn {
+  background: #4299e1;
+  color: white;
+}
+
+.status-btn {
+  background: #ed8936;
+  color: white;
+}
+
+.delete-btn {
+  background: #f56565;
+  color: white;
+}
+
+.edit-btn:hover,
+.status-btn:hover,
+.delete-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(110%);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Scrollbar Styling */
+.list-table::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.list-table::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.list-table::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 10px;
+}
+
+
+/* Stats Cards */
+.restaurant-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  border: 1px solid #e2e8f0;
+}
+
+.stat-card h4 {
+  color: #718096;
+  font-size: 14px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.stat-number.active {
+  color: #48bb78;
+}
+
+.stat-number.inactive {
+  color: #f56565;
+}
+
+/* Search and Filter Bar */
+.search-filter-bar {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 2;
+  min-width: 250px;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.filter-select {
+  flex: 1;
+  min-width: 150px;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* Status Badge */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-badge.active {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.status-badge.inactive {
+  background: #fed7d7;
+  color: #742a2a;
+}
+
+/* Loading State */
+.loading-state {
+  text-align: center;
+  padding: 40px;
+  color: #718096;
+  font-size: 16px;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #a0aec0;
+  font-size: 16px;
+  background: white;
+  border-radius: 10px;
+  border: 2px dashed #e2e8f0;
+  margin: 20px 0;
+}
+
+.empty-state p:first-child {
+  font-size: 18px;
+  color: #4a5568;
+  margin-bottom: 5px;
+}
+
+.empty-state p:last-child {
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .restaurant-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .search-filter-bar {
+    flex-direction: column;
+  }
+  
+  .search-input,
+  .filter-select {
+    width: 100%;
+  }
+}
+
+
+
+.list-table::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .restaurants {
+    padding: 10px;
+  }
+  
+  .flex-col {
+    padding: 15px;
+  }
+  
+  form.flex-col {
+    grid-template-columns: 1fr;
+  }
+  
+  .add-img-upload,
+  .add-product-description,
+  .cuisine-section,
+  button[type="submit"] {
+    grid-column: span 1;
+  }
+  
+  .add-header {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .add-btn {
+    width: 100%;
+  }
+}

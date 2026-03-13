@@ -6,11 +6,13 @@
 }
 
 .list.add p {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   text-align: center;
   color: #333;
+  border-bottom: 2px solid #0070f3;
+  padding-bottom: 10px;
 }
 
 .list-table {
@@ -18,31 +20,42 @@
   gap: 15px;
 }
 
-/* Row layout */
+/* Row layout - FIXED ALIGNMENT */
 .list-table-format {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 1fr 1fr 0.5fr;
+  grid-template-columns: 0.5fr 2fr 1fr 1fr 1.5fr 0.3fr;  /* Adjusted last column */
   align-items: center;
-  gap: 10px;
-  padding: 12px 15px;
-  border: 1px solid #cacaca;
-  font-size: 13px;
+  gap: 15px;
+  padding: 15px 20px;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
   background-color: #fff;
-  border-radius: 10px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .list-table-format:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 112, 243, 0.1);
+  border-color: #0070f3;
 }
 
-/* Header row */
+/* Header row - FIXED ALIGNMENT */
 .list-table-format.title {
   background-color: #0070f3;
-  color: #fff;
+  color: white;
   font-weight: bold;
-  border-radius: 10px;
+  border-radius: 8px;
+  grid-template-columns: 0.5fr 2fr 1fr 1fr 1.5fr 0.3fr;  /* Match the row columns */
+  padding: 15px 20px;
+  border: none;
+}
+
+/* Header text */
+.list-table-format.title b {
+  color: white;
+  text-align: left;
 }
 
 /* Image styling */
@@ -51,34 +64,138 @@
   height: 50px;
   object-fit: cover;
   border-radius: 6px;
+  border: 1px solid #e0e0e0;
 }
 
-/* Delete / action button */
+/* Text styling */
+.list-table-format p {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  color: #333;
+  border-bottom: none;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Restaurant badge - FIXED VISIBILITY */
+.restaurant-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+  border: 1px solid rgba(255,255,255,0.2);
+  max-width: 100%;
+}
+
+/* Delete button - FIXED ALIGNMENT */
 .list-table-format .cursor {
   cursor: pointer;
   text-align: center;
-  color: #ef4444;
+  color: #ff4444;
   font-weight: bold;
+  font-size: 18px;
   transition: all 0.2s ease;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fff0f0;
+  margin: 0 auto;  /* Center in the column */
 }
 
 .list-table-format .cursor:hover {
+  background: #ff4444;
+  color: white;
   transform: scale(1.1);
-  color: #c0392b;
+}
+
+/* "Not Assigned" styling */
+.list-table-format p:contains("Not Assigned") {
+  color: #999;
+  font-style: italic;
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
 }
 
 /* Responsive */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .list-table-format {
-    grid-template-columns: 1fr 3fr 1fr;
-    gap: 15px;
+    grid-template-columns: 0.5fr 1.5fr 1fr 1fr 1.2fr 0.3fr;
+    gap: 8px;
+    padding: 12px;
     font-size: 12px;
   }
-
-  .list-table-format img {
-    width: 40px;
-    height: 40px;
+  
+  .restaurant-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+  
+  .list-table-format .cursor {
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
   }
 }
 
+@media (max-width: 600px) {
+  .list-table-format {
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 10px;
+    padding: 15px;
+  }
+  
+  .list-table-format.title {
+    display: none;
+  }
+  
+  .list-table-format img {
+    grid-row: span 3;
+  }
+  
+  .list-table-format p {
+    margin: 5px 0;
+  }
+  
+  .list-table-format .restaurant-badge {
+    grid-column: span 2;
+    text-align: center;
+    width: fit-content;
+    margin: 0 auto;
+  }
+  
+  .list-table-format .cursor {
+    grid-column: span 3;
+    width: 100%;
+    border-radius: 20px;
+    margin-top: 5px;
+    height: 36px;
+  }
+}
 
+/* Ensure all columns align properly */
+.list-table-format > * {
+  min-width: 0; /* Prevents overflow */
+}
+
+/* Make the Action column text centered */
+.list-table-format .cursor {
+  justify-self: center;
+}

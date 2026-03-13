@@ -132,7 +132,6 @@ const updateStatus = async (req,res) => {
 
 export {placeOrder,verifyOrder,userOrders,listOrders,updateStatus}*/
 
-
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
 import axios from "axios";
@@ -172,7 +171,7 @@ const generateToken = async () => {
   return response.data.access_token;
 };
 
-// Place order with M-Pesa payment
+// Place order with M-Pesa payment - UPDATED with restaurant info
 const placeOrder = async (req, res) => {
   try {
     const userId = getUserIdFromToken(req);
@@ -183,9 +182,19 @@ const placeOrder = async (req, res) => {
       });
     }
 
+    // Process items to ensure restaurant info is included
+    const processedItems = req.body.items.map(item => ({
+      foodId: item._id || item.foodId,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      restaurantId: item.restaurantId, // Make sure this is sent from frontend
+      restaurantName: item.restaurantName || "Unknown Restaurant"
+    }));
+
     const newOrder = new orderModel({
       userId: userId,
-      items: req.body.items,
+      items: processedItems,
       amount: req.body.amount,
       address: req.body.address,
       status: "Food Processing",
@@ -299,7 +308,7 @@ const mpesaCallback = async (req, res) => {
   }
 };
 
-// Get user orders - FIXED FOR YOUR MODEL
+// Get user orders - UPDATED to include restaurant info
 const userOrders = async (req, res) => {
   try {
     console.log("📦 Fetching user orders...");
@@ -337,7 +346,6 @@ const userOrders = async (req, res) => {
     // Format orders to match frontend expectations
     const formattedOrders = orders.map(order => {
       console.log("Processing order:", order._id);
-      console.log("Order items type:", typeof order.items);
       console.log("Order items:", order.items);
       
       // Ensure items is an array and has proper structure
@@ -351,7 +359,9 @@ const userOrders = async (req, res) => {
               price: item.price || 0,
               quantity: item.quantity || 1,
               image: item.image || "",
-              _id: item._id || item.itemId || ""
+              _id: item._id || item.foodId || "",
+              restaurantId: item.restaurantId || "", // Include restaurantId
+              restaurantName: item.restaurantName || "Unknown" // Include restaurantName
             };
           }
           return {
@@ -359,7 +369,9 @@ const userOrders = async (req, res) => {
             price: 0,
             quantity: 1,
             image: "",
-            _id: ""
+            _id: "",
+            restaurantId: "",
+            restaurantName: "Unknown"
           };
         });
       }
@@ -396,22 +408,72 @@ const userOrders = async (req, res) => {
   }
 };
 
-// List all orders (admin)
+// List all orders (admin) - UPDATED
 const listOrders = async (req, res) => {
   try {
     const orders = await orderModel.find({})
       .sort({ date: -1 });
     
+    // Process orders to group by restaurant if needed
+    const processedOrders = orders.map(order => {
+      // Group items by restaurant
+      const itemsByRestaurant = {};
+      order.items.forEach(item => {
+        const restId = item.restaurantId || 'unknown';
+        if (!itemsByRestaurant[restId]) {
+          itemsByRestaurant[restId] = {
+            restaurantName: item.restaurantName || 'Unknown Restaurant',
+            items: []
+          };
+        }
+        itemsByRestaurant[restId].items.push(item);
+      });
+      
+      return {
+        ...order.toObject(),
+        itemsByRestaurant
+      };
+    });
+    
     res.json({ 
       success: true, 
-      count: orders.length,
-      data: orders 
+      count: processedOrders.length,
+      data: processedOrders 
     });
   } catch (error) {
     console.log("List orders error:", error);
     res.status(500).json({ 
       success: false, 
       message: "Error fetching orders" 
+    });
+  }
+};
+
+// Get orders by restaurant (for restaurant dashboard)
+const getRestaurantOrders = async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+    
+    const orders = await orderModel.find({
+      "items.restaurantId": restaurantId
+    }).sort({ date: -1 });
+    
+    // Filter items to only show those from this restaurant
+    const filteredOrders = orders.map(order => ({
+      ...order.toObject(),
+      items: order.items.filter(item => item.restaurantId === restaurantId)
+    }));
+    
+    res.json({ 
+      success: true, 
+      count: filteredOrders.length,
+      data: filteredOrders 
+    });
+  } catch (error) {
+    console.log("Restaurant orders error:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Error fetching restaurant orders" 
     });
   }
 };
@@ -455,4 +517,11 @@ const updateStatus = async (req, res) => {
   }
 };
 
-export { placeOrder, mpesaCallback, userOrders, listOrders, updateStatus };
+export { 
+  placeOrder, 
+  mpesaCallback, 
+  userOrders, 
+  listOrders, 
+  updateStatus,
+  getRestaurantOrders 
+};

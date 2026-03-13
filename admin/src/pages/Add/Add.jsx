@@ -1,16 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { assets } from "../../assets/assets";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const Add = ({ url }) => {
   const [image, setImage] = useState(false);
+  const [restaurants, setRestaurants] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     name: "",
     description: "",
     price: "",
     category: "Salad",
+    restaurantId: "", // NEW FIELD
   });
+
+  // Fetch restaurants for dropdown
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(
+          `${url}/api/admin/restaurants`,
+          { headers: { token } }
+        );
+        
+        if (response.data.success) {
+          setRestaurants(response.data.restaurants);
+          // Set default restaurant if available
+          if (response.data.restaurants.length > 0) {
+            setData(prev => ({ ...prev, restaurantId: response.data.restaurants[0]._id }));
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching restaurants:", error);
+        toast.error("Failed to load restaurants");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchRestaurants();
+  }, [url]);
 
   const onChangeHandler = (event) => {
     const name = event.target.name;
@@ -20,19 +52,34 @@ const Add = ({ url }) => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+    
+    // Validate restaurant selection
+    if (!data.restaurantId) {
+      toast.error("Please select a restaurant");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
     formData.append("price", Number(data.price));
     formData.append("category", data.category);
+    formData.append("restaurantId", data.restaurantId); // NEW FIELD
     formData.append("image", image);
-    const response = await axios.post(`${url}/api/food/add`, formData);
+    
+    const token = localStorage.getItem('token');
+    
+    const response = await axios.post(`${url}/api/food/add`, formData, {
+      headers: { token }
+    });
+    
     if (response.data.success) {
       setData({
         name: "",
         description: "",
         price: "",
         category: "Salad",
+        restaurantId: restaurants[0]?._id || "", // Reset to first restaurant
       });
       setImage(false);
       toast.success(response.data.message);
@@ -171,6 +218,53 @@ const Add = ({ url }) => {
               outline: "none",
             }}
           ></textarea>
+        </div>
+
+        {/* NEW: Restaurant Selection */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <p
+            style={{
+              fontSize: "14px",
+              fontWeight: "600",
+              color: "#2d3748",
+              margin: 0,
+            }}
+          >
+            Select Restaurant
+          </p>
+          <select
+            name="restaurantId"
+            value={data.restaurantId}
+            onChange={onChangeHandler}
+            required
+            style={{
+              padding: "11px 12px",
+              border: "1px solid #e2e8f0",
+              borderRadius: "8px",
+              fontSize: "14px",
+              fontFamily: '"Poppins", sans-serif',
+              backgroundColor: "#f7fafc",
+              outline: "none",
+              cursor: "pointer",
+            }}
+          >
+            <option value="">-- Choose Restaurant --</option>
+            {restaurants.map((restaurant) => (
+              <option key={restaurant._id} value={restaurant._id}>
+                {restaurant.name}
+              </option>
+            ))}
+          </select>
+          {restaurants.length === 0 && !loading && (
+            <p style={{ color: "#e53e3e", fontSize: "12px", marginTop: "5px" }}>
+              ⚠️ No restaurants found. Add a restaurant first.
+            </p>
+          )}
+          {loading && (
+            <p style={{ color: "#718096", fontSize: "12px", marginTop: "5px" }}>
+              Loading restaurants...
+            </p>
+          )}
         </div>
 
         {/* Category and Price */}

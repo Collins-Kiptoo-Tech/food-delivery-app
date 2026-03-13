@@ -6,9 +6,8 @@ import foodRouter from "./routes/foodRoute.js"
 import userRouter from "./routes/userRoute.js"
 import cartRouter from "./routes/cartRoute.js"
 import orderRouter from "./routes/orderRoute.js"
-
-
-
+import adminRestaurantRouter from './routes/adminRestaurantRoute.js'
+import adminAuthRouter from './routes/adminAuthRoute.js'
 
 
 
@@ -41,6 +40,8 @@ app.use("/uploads", express.static("uploads"));
 app.use('/api/user',userRouter)
 app.use('/api/cart',cartRouter)
 app.use('/api/order',orderRouter)
+app.use('/api/admin', adminRestaurantRouter)
+app.use('/api/admin/auth', adminAuthRouter)
 
 
 

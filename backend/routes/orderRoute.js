@@ -1,6 +1,13 @@
 import express from 'express'
 import orderModel from "../models/orderModel.js";
-import { placeOrder, mpesaCallback, userOrders, listOrders, updateStatus } from "../controller/orderController.js";
+import { 
+  placeOrder, 
+  mpesaCallback, 
+  userOrders, 
+  listOrders, 
+  updateStatus,
+  getRestaurantOrders
+} from "../controller/orderController.js";
 
 const router = express.Router();
 
@@ -11,6 +18,9 @@ router.post("/place", placeOrder);
 router.post("/mpesa/callback", mpesaCallback);
 router.get("/list", listOrders);
 router.post("/status", updateStatus);
+
+// NEW ROUTE: Get orders for a specific restaurant
+router.get("/restaurant/:restaurantId", getRestaurantOrders);
 
 // ============ DEBUG ROUTES ============
 
@@ -35,6 +45,12 @@ router.get("/test-all", async (req, res) => {
       console.log("Items count:", orders[0].items?.length || 0);
       console.log("Amount:", orders[0].amount);
       console.log("Status:", orders[0].status);
+      
+      // Log restaurant info if available
+      if (orders[0].items && orders[0].items.length > 0) {
+        console.log("Restaurant ID from first item:", orders[0].items[0].restaurantId);
+        console.log("Restaurant Name from first item:", orders[0].items[0].restaurantName);
+      }
     }
     
     res.json({
@@ -54,51 +70,66 @@ router.get("/test-all", async (req, res) => {
   }
 });
 
-// Test route 2: Create a test order
+// Test route 2: Create a test order with restaurant info - FIXED VERSION
 router.get("/test-create", async (req, res) => {
   try {
-    console.log("🔍 Test: Creating test order...");
+    console.log("🔍 Test: Creating test order with restaurant info...");
     
-    // Use a test user ID (get one from your users collection)
+    // Get restaurant IDs from query params or use defaults
+    const restaurant1Id = req.query.rest1 || "69b338e1d367126156ee851a"; // LITMUS HOTEL
+    const restaurant2Id = req.query.rest2 || "69b338e1d367126156ee851b"; // KING'S HOTEL
+    
     const testOrders = [
       {
-        userId: "test-user-123", // Use a simple test ID
+        userId: "test-user-123",
         items: [
           {
+            foodId: "food123456",
             name: "Chicken Burger",
             price: 850,
             quantity: 2,
-            image: "burger.jpg"
+            restaurantId: restaurant1Id,
+            restaurantName: "LITMUS HOTEL"
           },
           {
+            foodId: "food789012",
             name: "French Fries",
             price: 300,
             quantity: 1,
-            image: "fries.jpg"
+            restaurantId: restaurant1Id,
+            restaurantName: "LITMUS HOTEL"
           }
         ],
         amount: 2000,
         address: {
           street: "123 Test Street",
           city: "Nairobi",
-          country: "Kenya"
+          country: "Kenya",
+          phone: "+254700000000"
         },
-        status: "Delivered",
-        payment: true,
+        status: "Food Processing",
+        payment: false,
         date: new Date()
       },
       {
         userId: "test-user-123",
         items: [
           {
-            name: "Pizza",
+            foodId: "food345678",
+            name: "Beef Wellington",
             price: 1200,
             quantity: 1,
-            image: "pizza.jpg"
+            restaurantId: restaurant2Id,
+            restaurantName: "KING'S HOTEL"
           }
         ],
         amount: 1200,
-        address: "456 Another Street, Nairobi",
+        address: {
+          street: "456 Another Street",
+          city: "Nairobi",
+          country: "Kenya",
+          phone: "+254711111111"
+        },
         status: "Food Processing",
         payment: false,
         date: new Date(Date.now() - 86400000) // Yesterday
@@ -107,26 +138,28 @@ router.get("/test-create", async (req, res) => {
     
     const createdOrders = [];
     for (const orderData of testOrders) {
+      console.log("Creating order with data:", JSON.stringify(orderData, null, 2));
       const order = new orderModel(orderData);
       await order.save();
       createdOrders.push(order);
     }
     
-    console.log(`✅ Test: Created ${createdOrders.length} test orders`);
+    console.log(`✅ Test: Created ${createdOrders.length} test orders with restaurant info`);
     
     res.json({
       success: true,
-      message: "Test orders created",
+      message: "Test orders created with restaurant info",
       count: createdOrders.length,
       orders: createdOrders
     });
     
   } catch (error) {
-    console.error("❌ Test create error:", error);
+    console.error("❌ Test create error details:", error);
     res.status(500).json({
       success: false,
       message: "Failed to create test orders",
-      error: error.message
+      error: error.message,
+      errors: error.errors
     });
   }
 });
@@ -141,9 +174,55 @@ router.get("/test-endpoint", (req, res) => {
       { method: "GET", path: "/api/order/userorders", description: "Get user orders" },
       { method: "POST", path: "/api/order/place", description: "Place new order" },
       { method: "GET", path: "/api/order/list", description: "List all orders (admin)" },
-      { method: "POST", path: "/api/order/status", description: "Update order status" }
+      { method: "POST", path: "/api/order/status", description: "Update order status" },
+      { method: "GET", path: "/api/order/restaurant/:restaurantId", description: "Get orders for specific restaurant" }
     ]
   });
+});
+
+// Test route 4: Test restaurant orders endpoint
+router.get("/test-restaurant/:restaurantId", async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+    console.log(`🔍 Testing restaurant orders for ID: ${restaurantId}`);
+    
+    const orders = await orderModel.find({
+      "items.restaurantId": restaurantId
+    });
+    
+    console.log(`✅ Found ${orders.length} orders for restaurant ${restaurantId}`);
+    
+    res.json({
+      success: true,
+      restaurantId,
+      count: orders.length,
+      orders
+    });
+  } catch (error) {
+    console.error("❌ Test restaurant error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+// Test route 5: Clear all test orders (optional)
+router.get("/test-clear", async (req, res) => {
+  try {
+    const result = await orderModel.deleteMany({ userId: "test-user-123" });
+    console.log(`✅ Cleared ${result.deletedCount} test orders`);
+    res.json({
+      success: true,
+      message: `Cleared ${result.deletedCount} test orders`
+    });
+  } catch (error) {
+    console.error("❌ Clear error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
 });
 
 export default router;

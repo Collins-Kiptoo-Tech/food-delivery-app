@@ -21,7 +21,8 @@ app.use(cors({
   origin: ['http://localhost:5173',
      'http://localhost:3000',
       'http://localhost:5174',
-    'https://food-delivery-app-frontend-dehm.onrender.com'
+    'https://food-delivery-app-frontend-dehm.onrender.com',
+     'https://food-delivery-app-admin-toj9.onrender.com'
 ],
   credentials: true
 })) // Enable CORS for your React app

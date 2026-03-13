@@ -16,17 +16,33 @@ const Login = () => {
         setError('')
 
         try {
+            console.log("📍 Attempting login with:", email)
+            
             const response = await axios.post(
                 `${import.meta.env.VITE_API_URL}/api/admin/auth/login`,
                 { email, password }
             )
 
+            console.log("📍 Login response from server:", response.data)
+
             if (response.data.success) {
+                // Save token and admin data
                 localStorage.setItem('token', response.data.token)
                 localStorage.setItem('admin', JSON.stringify(response.data.admin))
-                navigate('/') // Go to admin dashboard
+                
+                // Verify they were saved
+                console.log("📍 Token saved to localStorage:", localStorage.getItem('token') ? "YES ✅" : "NO ❌")
+                console.log("📍 Admin data saved:", localStorage.getItem('admin') ? "YES ✅" : "NO ❌")
+                
+                // Navigate to dashboard
+                navigate('/dashboard')
+            } else {
+                console.log("📍 Login failed:", response.data.message)
+                setError(response.data.message || 'Login failed')
             }
         } catch (error) {
+            console.error("📍 Login error:", error)
+            console.error("📍 Error response:", error.response?.data)
             setError(error.response?.data?.message || 'Login failed')
         } finally {
             setLoading(false)

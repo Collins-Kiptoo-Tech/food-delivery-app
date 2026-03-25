@@ -10,6 +10,19 @@ import {
 } from "../controller/orderController.js";
 
 const router = express.Router();
+// DEBUG: Simple test endpoint
+router.post("/debug", (req, res) => {
+  console.log('✅ DEBUG: Order endpoint hit');
+  console.log('Headers:', req.headers);
+  console.log('Body:', req.body);
+  
+  res.json({
+    success: true,
+    message: "Debug endpoint working",
+    headers: req.headers,
+    body: req.body
+  });
+});
 
 // IMPORTANT: Change from POST to GET for userOrders
 router.get("/userorders", userOrders); // CHANGED FROM POST TO GET

@@ -5,99 +5,82 @@ import adminModel from '../models/adminModel.js'
 
 const router = express.Router()
 
-// Create default admin (run once)
+// ===============================
+// 🛠 CREATE DEFAULT ADMIN (run once)
+// ===============================
 router.post('/setup', async (req, res) => {
-    try {
-        const { email, password, name } = req.body
-        
-        // Check if admin exists
-        const exists = await adminModel.findOne({ email })
-        if (exists) {
-            return res.json({ success: false, message: "Admin already exists" })
-        }
+  try {
+    const { email, password, name } = req.body
 
-        // Hash password
-        const salt = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(password, salt)
-
-        // Create admin
-        const admin = new adminModel({
-            name,
-            email,
-            password: hashedPassword
-        })
-
-        await admin.save()
-        res.json({ success: true, message: "Admin created successfully" })
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message })
+    const exists = await adminModel.findOne({ email })
+    if (exists) {
+      return res.json({ success: false, message: "Admin already exists" })
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const admin = new adminModel({ name, email, password: hashedPassword })
+    await admin.save()
+
+    res.json({ success: true, message: "Admin created successfully" })
+  } catch (error) {
+    console.error("Setup admin error:", error)
+    res.status(500).json({ success: false, message: error.message })
+  }
 })
 
-// Admin Login
+// ===============================
+// 🔑 ADMIN LOGIN
+// ===============================
 router.post('/login', async (req, res) => {
-    try {
-        const { email, password } = req.body
+  try {
+    const { email, password } = req.body
 
-        // Check if admin exists
-        const admin = await adminModel.findOne({ email })
-        if (!admin) {
-            return res.status(401).json({ 
-                success: false, 
-                message: "Invalid credentials" 
-            })
-        }
+    const admin = await adminModel.findOne({ email })
+    if (!admin) return res.status(401).json({ success: false, message: "Invalid credentials" })
 
-        // Verify password
-        const isMatch = await bcrypt.compare(password, admin.password)
-        if (!isMatch) {
-            return res.status(401).json({ 
-                success: false, 
-                message: "Invalid credentials" 
-            })
-        }
+    const isMatch = await bcrypt.compare(password, admin.password)
+    if (!isMatch) return res.status(401).json({ success: false, message: "Invalid credentials" })
 
-        // Create token
-        const token = jwt.sign(
-            { id: admin._id, email: admin.email, role: 'admin' },
-            process.env.JWT_SECRET,
-            { expiresIn: '1d' }
-        )
+    const token = jwt.sign(
+      { id: admin._id, email: admin.email, role: 'admin' },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    )
 
-        res.json({
-            success: true,
-            message: "Login successful",
-            token,
-            admin: {
-                id: admin._id,
-                name: admin.name,
-                email: admin.email
-            }
-        })
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message })
-    }
+    res.json({
+      success: true,
+      message: "Login successful",
+      token,
+      admin: { id: admin._id, name: admin.name, email: admin.email }
+    })
+  } catch (error) {
+    console.error("Admin login error:", error)
+    res.status(500).json({ success: false, message: error.message })
+  }
 })
 
-// Verify admin token
+// ===============================
+// 🔐 ADMIN TOKEN VERIFICATION
+// ===============================
 router.get('/verify', async (req, res) => {
-    try {
-        const token = req.headers.token
-        if (!token) {
-            return res.status(401).json({ success: false, message: "No token" })
-        }
+  try {
+    const authHeader = req.headers.authorization
+    if (!authHeader) return res.status(401).json({ success: false, message: "No token provided" })
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        const admin = await adminModel.findById(decoded.id).select('-password')
-        
-        if (!admin) {
-            return res.status(401).json({ success: false, message: "Admin not found" })
-        }
+    const token = authHeader.split(" ")[1] // Expect: "Bearer <token>"
+    if (!token) return res.status(401).json({ success: false, message: "Invalid token format" })
 
-        res.json({ success: true, admin })
-    } catch (error) {
-        res.status(401).json({ success: false, message: "Invalid token" })
-    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const admin = await adminModel.findById(decoded.id).select('-password')
+
+    if (!admin) return res.status(401).json({ success: false, message: "Admin not found" })
+
+    res.json({ success: true, admin })
+  } catch (error) {
+    console.error("Verify token error:", error)
+    res.status(401).json({ success: false, message: "Invalid or expired token" })
+  }
 })
 
 export default router

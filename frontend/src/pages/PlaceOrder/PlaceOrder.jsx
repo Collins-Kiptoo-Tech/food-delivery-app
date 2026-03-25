@@ -56,36 +56,61 @@ const PlaceOrder = () => {
     event.preventDefault();
     if (!validate()) return;
 
+    // Format order items correctly with all required fields
     const orderItems = [];
     food_list.forEach((item) => {
       if (cartItems[item._id] > 0) {
-        orderItems.push({ ...item, quantity: cartItems[item._id] });
+        orderItems.push({
+          foodId: item._id,
+          name: item.name,
+          price: item.price,
+          quantity: cartItems[item._id],
+          restaurantId: item.restaurantId || "default-restaurant-id",
+          restaurantName: item.restaurantName || "Main Restaurant"
+        });
       }
     });
 
+    // Format address data
     const orderData = {
-      address: data,
+      address: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        street: data.street,
+        city: data.city,
+        state: data.state,
+        zipcode: data.zipcode,
+        country: data.country,
+        phone: data.phone
+      },
       items: orderItems,
       amount: getTotalCartAmount() + DELIVERY_FEE,
-      phone: data.phone,
+      paymentMethod: "COD"
     };
+
+    console.log('📦 Sending order:', orderItems.length, 'items');
+    console.log('💰 Amount:', orderData.amount);
 
     try {
       setLoading(true);
       setErrors({});
-      await axios.post(url + "/api/order/place", orderData, {
-  headers: { 
-    'Authorization': `Bearer ${token}`,  // ✅ CORRECT
-    'Content-Type': 'application/json'
-    
-  },
-});
+      
+      const response = await axios.post(url + "/api/order/place", orderData, {
+        headers: { 
+          'token': token,
+          'Content-Type': 'application/json'
+        },
+      });
+      
+      console.log('✅ Order placed:', response.data);
       setLoading(false);
       navigate("/payment-methods", { state: { orderData } });
     } catch (err) {
-      console.error(err);
+      console.error('❌ Order error:', err);
+      console.error('Response:', err.response?.data);
       setLoading(false);
-      setErrors({ form: "Something went wrong. Please try again." });
+      setErrors({ form: err.response?.data?.message || "Something went wrong. Please try again." });
     }
   };
 

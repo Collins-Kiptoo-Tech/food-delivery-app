@@ -7,13 +7,13 @@ const orderSchema = new mongoose.Schema({
         name: { type: String, required: true },
         price: { type: Number, required: true },
         quantity: { type: Number, required: true },
-        restaurantId: { type: String, required: true }, // NEW FIELD
-        restaurantName: { type: String } // Optional: store restaurant name for quick access
+        restaurantId: { type: String, required: false }, // Changed to false
+        restaurantName: { type: String }
     }],
     amount: { type: Number, required: true },
     address: { type: Object, required: true },
     status: { type: String, default: "Food Processing" },
-    date: { type: Date, default: Date.now() },
+    date: { type: Date, default: Date.now }, // Fixed: removed ()
     payment: { type: Boolean, default: false }
 })
 

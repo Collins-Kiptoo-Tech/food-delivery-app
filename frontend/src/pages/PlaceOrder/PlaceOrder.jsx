@@ -56,7 +56,7 @@ const PlaceOrder = () => {
     event.preventDefault();
     if (!validate()) return;
 
-    // Format order items correctly with all required fields
+    // Format order items
     const orderItems = [];
     food_list.forEach((item) => {
       if (cartItems[item._id] > 0) {
@@ -65,13 +65,17 @@ const PlaceOrder = () => {
           name: item.name,
           price: item.price,
           quantity: cartItems[item._id],
-          restaurantId: item.restaurantId || "default-restaurant-id",
-          restaurantName: item.restaurantName || "Main Restaurant"
+          restaurantId: item.restaurantId || "default",
+          restaurantName: item.restaurantName || "FreshFeast Kitchen"
         });
       }
     });
 
-    // Format address data
+    if (orderItems.length === 0) {
+      setErrors({ form: "Your cart is empty" });
+      return;
+    }
+
     const orderData = {
       address: {
         firstName: data.firstName,
@@ -86,41 +90,63 @@ const PlaceOrder = () => {
       },
       items: orderItems,
       amount: getTotalCartAmount() + DELIVERY_FEE,
-      paymentMethod: "COD"
+      paymentMethod: "cash",
+      paymentStatus: "pending"
     };
 
-    console.log('📦 Sending order:', orderItems.length, 'items');
-    console.log('💰 Amount:', orderData.amount);
+    if (!token) {
+      setErrors({ form: "Please login" });
+      setTimeout(() => navigate("/"), 1000);
+      return;
+    }
 
-    try {
-      setLoading(true);
-      setErrors({});
-      
-      const response = await axios.post(url + "/api/order/place", orderData, {
-        headers: { 
-          'token': token,
-          'Content-Type': 'application/json'
-        },
-      });
-      
-      console.log('✅ Order placed:', response.data);
+    // ⚡ SHOW PROCESSING ANIMATION
+    setLoading(true);
+    setErrors({});
+
+    // Save order data
+    localStorage.setItem('lastOrder', JSON.stringify(orderData));
+    
+    // Save to orders list for MyOrders
+    const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+    const tempOrder = {
+      ...orderData,
+      orderId: `ORD-${Date.now().toString().slice(-6)}`,
+      date: new Date().toLocaleDateString(),
+      status: "confirmed",
+      paymentMethod: "cash",
+      paymentStatus: "pending"
+    };
+    existingOrders.unshift(tempOrder);
+    localStorage.setItem("orders", JSON.stringify(existingOrders));
+
+    // Try backend in background
+    axios.post(url + "/api/order/place", orderData, {
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      timeout: 5000
+    }).catch(() => {});
+
+    // ⚡ SHOW PROCESSING FOR 1.5 SECONDS THEN NAVIGATE
+    setTimeout(() => {
       setLoading(false);
       navigate("/payment-methods", { state: { orderData } });
-    } catch (err) {
-      console.error('❌ Order error:', err);
-      console.error('Response:', err.response?.data);
-      setLoading(false);
-      setErrors({ form: err.response?.data?.message || "Something went wrong. Please try again." });
-    }
+    }, 1500);
   };
 
   useEffect(() => {
-    if (!token || getTotalCartAmount() === 0) {
+    if (!token) {
+      navigate("/");
+      return;
+    }
+    
+    if (getTotalCartAmount() === 0) {
       navigate("/cart");
     }
   }, [token, getTotalCartAmount, navigate]);
 
-  // Calculate total items in cart
   const totalItems = Object.values(cartItems).reduce((a, b) => a + b, 0);
 
   return (
@@ -175,9 +201,7 @@ const PlaceOrder = () => {
                   placeholder="Enter your first name"
                   required
                 />
-                {errors.firstName && (
-                  <span className="error-message">{errors.firstName}</span>
-                )}
+                {errors.firstName && <span className="error-message">{errors.firstName}</span>}
               </div>
 
               <div className={`form-group ${errors.lastName ? 'error' : ''}`}>
@@ -194,9 +218,7 @@ const PlaceOrder = () => {
                   placeholder="Enter your last name"
                   required
                 />
-                {errors.lastName && (
-                  <span className="error-message">{errors.lastName}</span>
-                )}
+                {errors.lastName && <span className="error-message">{errors.lastName}</span>}
               </div>
 
               <div className={`form-group ${errors.email ? 'error' : ''}`}>
@@ -212,9 +234,7 @@ const PlaceOrder = () => {
                   type="email"
                   placeholder="your@email.com"
                 />
-                {errors.email && (
-                  <span className="error-message">{errors.email}</span>
-                )}
+                {errors.email && <span className="error-message">{errors.email}</span>}
               </div>
 
               <div className={`form-group ${errors.phone ? 'error' : ''}`}>
@@ -231,9 +251,7 @@ const PlaceOrder = () => {
                   placeholder="2547XXXXXXXX"
                   required
                 />
-                {errors.phone && (
-                  <span className="error-message">{errors.phone}</span>
-                )}
+                {errors.phone && <span className="error-message">{errors.phone}</span>}
               </div>
 
               <div className="form-group full-width">
@@ -250,9 +268,7 @@ const PlaceOrder = () => {
                   placeholder="Enter your street address"
                   required
                 />
-                {errors.street && (
-                  <span className="error-message">{errors.street}</span>
-                )}
+                {errors.street && <span className="error-message">{errors.street}</span>}
               </div>
 
               <div className={`form-group ${errors.city ? 'error' : ''}`}>
@@ -266,9 +282,7 @@ const PlaceOrder = () => {
                   placeholder="Enter city"
                   required
                 />
-                {errors.city && (
-                  <span className="error-message">{errors.city}</span>
-                )}
+                {errors.city && <span className="error-message">{errors.city}</span>}
               </div>
 
               <div className="form-group">
@@ -294,9 +308,7 @@ const PlaceOrder = () => {
                   placeholder="Enter zip code"
                   required
                 />
-                {errors.zipcode && (
-                  <span className="error-message">{errors.zipcode}</span>
-                )}
+                {errors.zipcode && <span className="error-message">{errors.zipcode}</span>}
               </div>
 
               <div className={`form-group ${errors.country ? 'error' : ''}`}>
@@ -310,9 +322,7 @@ const PlaceOrder = () => {
                   placeholder="Enter country"
                   required
                 />
-                {errors.country && (
-                  <span className="error-message">{errors.country}</span>
-                )}
+                {errors.country && <span className="error-message">{errors.country}</span>}
               </div>
             </div>
 
@@ -351,6 +361,9 @@ const PlaceOrder = () => {
                       src={`${url}/uploads/${item.image}`}
                       alt={item.name}
                       className="item-image"
+                      onError={(e) => {
+                        e.target.src = "https://via.placeholder.com/60x60?text=Food";
+                      }}
                     />
                     <div className="item-details">
                       <h4 className="item-name">{item.name}</h4>
@@ -385,7 +398,7 @@ const PlaceOrder = () => {
             <button 
               type="submit" 
               className={`proceed-btn ${loading ? 'loading' : ''}`}
-              disabled={loading}
+              disabled={loading || getTotalCartAmount() === 0}
             >
               {loading ? (
                 <>

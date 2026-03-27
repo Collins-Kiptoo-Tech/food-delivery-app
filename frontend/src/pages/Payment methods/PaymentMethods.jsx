@@ -13,37 +13,70 @@ import {
   FiTruck
 } from "react-icons/fi";
 import { FaPaypal } from "react-icons/fa";
+import axios from "axios";
 
 const PaymentMethods = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const orderData = location.state?.orderData;
 
+  console.log("📍 PaymentMethods loaded");
+  console.log("📍 orderData:", orderData);
+
   const [selectedMethod, setSelectedMethod] = useState("paypal");
   const [loading, setLoading] = useState(false);
   const [paypalError, setPaypalError] = useState("");
 
-  const totalAmount = orderData?.total || orderData?.amount || 0;
+  // Calculate totals correctly from items
+  const calculateSubtotal = () => {
+    if (orderData?.items && Array.isArray(orderData.items)) {
+      return orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    }
+    return 0;
+  };
+
+  const subtotal = calculateSubtotal();
+  const deliveryFee = 75;
+  const totalAmount = subtotal + deliveryFee;
   const codFee = 50;
   const finalAmount = selectedMethod === "cash" ? totalAmount + codFee : totalAmount;
 
-  // Your SANDBOX Client ID - SAFE FOR TESTING
+  console.log("💰 Subtotal:", subtotal);
+  console.log("💰 Total Amount:", totalAmount);
+  console.log("💰 Final Amount:", finalAmount);
+
+  // Get token from localStorage
+  const token = localStorage.getItem("token");
+
+  // PayPal Client ID
   const paypalOptions = {
     "client-id": "AQ58xWEITgxA4_AdIxuo8AjogaZxr9v1jLDiuQ92ZSrhqhEv5QLZ0-GfGKPH8wJmMySaj2aTOzFHEoM1",
     currency: "USD",
     intent: "capture",
   };
 
-  // Handle successful PayPal payment
+  // Get estimated delivery time
+  const getEstimatedDelivery = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 45);
+    return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  // ✅ FIXED: Handle successful PayPal payment
   const onApprove = async (data, actions) => {
     try {
       setLoading(true);
       const details = await actions.order.capture();
+      console.log("✅ PayPal payment captured:", details);
       
-      // Create order details
+      // Create order details with CORRECT payment method
       const orderDetails = {
         ...orderData,
+        items: orderData?.items || [],
+        amount: totalAmount,
         address: orderData?.address || {},
+        paymentMethod: "paypal",
+        paymentStatus: "paid",
         payment: {
           method: "paypal",
           status: "paid",
@@ -53,19 +86,43 @@ const PaymentMethods = () => {
           date: new Date().toISOString()
         },
         orderId: `ORD-${Date.now().toString().slice(-6)}`,
-        date: new Date().toISOString(),
+        orderNumber: `ORD-${Date.now().toString().slice(-6)}`,
+        date: new Date().toLocaleDateString(),
+        orderDate: new Date().toISOString(),
         status: "confirmed",
-        estimatedDelivery: getEstimatedDelivery(),
-        items: orderData?.items || [],
+        estimatedDelivery: getEstimatedDelivery()
       };
 
-      // Save to localStorage
-      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
-      orders.push(orderDetails);
-      localStorage.setItem("orders", JSON.stringify(orders));
+      console.log("💰 PayPal Order:", orderDetails);
+      console.log("💳 Payment Method:", orderDetails.paymentMethod);
+      console.log("✅ Payment Status:", orderDetails.paymentStatus);
+
+      // Save to localStorage with correct format
+      const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+      const newOrder = {
+        ...orderDetails,
+        id: Date.now(),
+        orderId: orderDetails.orderId,
+        items: orderDetails.items,
+        total: totalAmount,
+        amount: totalAmount,
+        paymentMethod: "paypal",
+        paymentStatus: "paid",
+        status: "confirmed"
+      };
+      
+      existingOrders.unshift(newOrder);
+      localStorage.setItem("orders", JSON.stringify(existingOrders));
+      localStorage.setItem(`order_${newOrder.orderId}`, JSON.stringify(newOrder));
+
+      console.log("✅ Order saved to localStorage with method:", newOrder.paymentMethod);
 
       navigate("/order-confirmation", {
-        state: { order: orderDetails, paymentMethod: "paypal" },
+        state: { 
+          order: newOrder, 
+          paymentMethod: "paypal",
+          paymentStatus: "paid"
+        },
       });
     } catch (err) {
       console.error("PayPal error:", err);
@@ -75,8 +132,10 @@ const PaymentMethods = () => {
     }
   };
 
-  // Complete Cash on Delivery order
+  // ✅ FIXED: Complete Cash on Delivery order
   const confirmCODOrder = () => {
+    console.log("🟢 confirmCODOrder called");
+    
     if (!orderData) {
       alert("Order data missing. Please go back and try again.");
       navigate("/cart");
@@ -86,39 +145,81 @@ const PaymentMethods = () => {
     setLoading(true);
 
     setTimeout(() => {
-      const orderDetails = {
-        ...orderData,
-        address: orderData.address || {},
-        payment: {
-          method: "cash",
-          status: "pending",
-          amount: totalAmount,
-          fee: codFee,
-        },
-        orderId: `COD-${Date.now().toString().slice(-6)}`,
-        date: new Date().toISOString(),
-        status: "confirmed",
-        estimatedDelivery: getEstimatedDelivery(),
-        items: orderData.items || [],
-      };
+      try {
+        const orderDetails = {
+          ...orderData,
+          items: orderData?.items || [],
+          amount: finalAmount,
+          address: orderData?.address || {},
+          paymentMethod: "cash",
+          paymentStatus: "pending",
+          payment: {
+            method: "cash",
+            status: "pending",
+            amount: totalAmount,
+            fee: codFee,
+          },
+          orderId: `COD-${Date.now().toString().slice(-6)}`,
+          orderNumber: `COD-${Date.now().toString().slice(-6)}`,
+          date: new Date().toLocaleDateString(),
+          orderDate: new Date().toISOString(),
+          status: "confirmed",
+          estimatedDelivery: getEstimatedDelivery(),
+          codFee: codFee
+        };
 
-      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
-      orders.push(orderDetails);
-      localStorage.setItem("orders", JSON.stringify(orders));
+        console.log("💰 Cash Order:", orderDetails);
+        console.log("💳 Payment Method:", orderDetails.paymentMethod);
+        console.log("⏳ Payment Status:", orderDetails.paymentStatus);
 
-      setLoading(false);
-      navigate("/order-confirmation", {
-        state: { order: orderDetails, paymentMethod: "cash" },
-      });
-    }, 1500);
+        // Save to localStorage with correct format
+        const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+        const newOrder = {
+          ...orderDetails,
+          id: Date.now(),
+          orderId: orderDetails.orderId,
+          items: orderDetails.items,
+          total: finalAmount,
+          amount: finalAmount,
+          paymentMethod: "cash",
+          paymentStatus: "pending",
+          status: "confirmed",
+          codFee: codFee
+        };
+        
+        existingOrders.unshift(newOrder);
+        localStorage.setItem("orders", JSON.stringify(existingOrders));
+        localStorage.setItem(`order_${newOrder.orderId}`, JSON.stringify(newOrder));
+
+        console.log("✅ Cash order saved to localStorage with method:", newOrder.paymentMethod);
+
+        setLoading(false);
+        
+        navigate("/order-confirmation", {
+          state: { 
+            order: newOrder, 
+            paymentMethod: "cash",
+            paymentStatus: "pending"
+          },
+        });
+      } catch (error) {
+        console.error("Order error:", error);
+        alert("Failed to confirm order. Please try again.");
+        setLoading(false);
+      }
+    }, 500);
   };
 
-  // Get estimated delivery time
-  const getEstimatedDelivery = () => {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 45);
-    return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
+  // Check if we have order data
+  if (!orderData) {
+    console.log("❌ No order data, redirecting to cart");
+    return (
+      <div style={{ textAlign: "center", padding: "50px" }}>
+        <h2>No order data found</h2>
+        <button onClick={() => navigate("/cart")}>Go to Cart</button>
+      </div>
+    );
+  }
 
   return (
     <div className="payment-page">
@@ -188,11 +289,11 @@ const PaymentMethods = () => {
             <div className="order-totals">
               <div className="total-row">
                 <span>Subtotal</span>
-                <span>KES {totalAmount - 75}</span>
+                <span>KES {subtotal}</span>
               </div>
               <div className="total-row">
                 <span>Delivery Fee</span>
-                <span>KES 75</span>
+                <span>KES {deliveryFee}</span>
               </div>
 
               {selectedMethod === "cash" && (
@@ -206,7 +307,7 @@ const PaymentMethods = () => {
               <div className="total-row grand-total">
                 <span>Total Amount</span>
                 <span className="total-amount">
-                  KES {finalAmount}
+                  KES {selectedMethod === "cash" ? finalAmount : totalAmount}
                 </span>
               </div>
             </div>
@@ -257,17 +358,18 @@ const PaymentMethods = () => {
                     <div className="error-message">{paypalError}</div>
                   )}
                   
-                 
-
                   <PayPalScriptProvider options={paypalOptions}>
                     <PayPalButtons
                       style={{ layout: "vertical", shape: "pill" }}
                       createOrder={(data, actions) => {
+                        const usdAmount = (totalAmount / 130).toFixed(2);
                         return actions.order.create({
                           purchase_units: [{
                             amount: {
-                              value: (totalAmount / 130).toFixed(2) // Approx USD conversion
-                            }
+                              value: usdAmount,
+                              currency_code: "USD"
+                            },
+                            description: "FreshFeast Food Order"
                           }]
                         });
                       }}
@@ -311,14 +413,19 @@ const PaymentMethods = () => {
               )}
             </div>
 
+            {/* Cash on Delivery Button */}
             {selectedMethod === "cash" && (
               <button 
+                type="button"
                 className="pay-button" 
                 onClick={confirmCODOrder} 
                 disabled={loading}
               >
                 {loading ? (
-                  <span className="loading-spinner"></span>
+                  <>
+                    <span className="loading-spinner"></span>
+                    Processing...
+                  </>
                 ) : (
                   <>
                     Confirm Cash Order

@@ -6,34 +6,95 @@ import { FiCheckCircle, FiPackage, FiClock, FiTruck, FiHome, FiShoppingBag } fro
 const PaymentCompleted = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { order, paymentMethod } = location.state || {};
+  const { order, paymentMethod, paymentStatus } = location.state || {};
 
-  // Calculate total if not provided
-  const calculateTotal = () => {
-    if (order?.amount) return order.amount;
-    if (order?.items) {
-      return order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 250; // Add delivery fee
+  console.log("📍 PaymentCompleted - order:", order);
+  console.log("📍 PaymentCompleted - paymentMethod:", paymentMethod);
+  console.log("📍 PaymentCompleted - paymentStatus:", paymentStatus);
+
+  // If no order data, try to get from localStorage
+  let orderData = order;
+  if (!orderData) {
+    const savedOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+    if (savedOrders.length > 0) {
+      orderData = savedOrders[0];
+      console.log("📍 Loaded order from localStorage:", orderData);
     }
-    return 0;
+  }
+
+  if (!orderData) {
+    return (
+      <div style={{ textAlign: "center", padding: "50px", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <h2>No order data found</h2>
+        <p>Please go back and try again.</p>
+        <button onClick={() => navigate("/")} style={{ marginTop: "20px", padding: "10px 20px", background: "#f59e0b", color: "white", border: "none", borderRadius: "8px", cursor: "pointer" }}>
+          Go to Home
+        </button>
+      </div>
+    );
+  }
+
+  // Calculate totals
+  const getItemsList = () => {
+    if (orderData.items && Array.isArray(orderData.items)) {
+      return orderData.items;
+    }
+    return [];
   };
 
-  const totalAmount = calculateTotal();
+  const itemsList = getItemsList();
+  const subtotal = itemsList.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+  const deliveryFee = 75;
+  const codFee = orderData.paymentMethod === "cash" ? 50 : 0;
+  const totalAmount = orderData.amount || subtotal + deliveryFee + codFee;
 
-  // ✅ Get order ID from different possible formats
-  const getOrderId = () => {
-    if (order?.orderId) return order.orderId;
-    if (order?._id) return order._id;
-    if (order?.id) return order.id;
-    return order?.orderId || "COD-098033";
+  // Get payment method display - IMPORTANT for MyOrders
+  const getPaymentMethodDisplay = () => {
+    const method = paymentMethod || orderData.paymentMethod || orderData.payment?.method;
+    if (method === "paypal") return "PayPal";
+    if (method === "cash") return "Cash on Delivery";
+    return "Cash on Delivery";
   };
 
-  const orderId = getOrderId();
-
-  // ✅ Track order handler - Navigate to actual tracking page
-  const handleTrackOrder = () => {
-    // Navigate to the track order page with the order ID
-    navigate(`/track-order/${orderId}`);
+  // Check if payment is paid - IMPORTANT for MyOrders
+  const isPaid = () => {
+    if (paymentStatus === "paid") return true;
+    if (orderData.paymentStatus === "paid") return true;
+    if (paymentMethod === "paypal") return true;
+    if (orderData.paymentMethod === "paypal") return true;
+    if (orderData.payment?.method === "paypal") return true;
+    return false;
   };
+
+  const orderId = orderData.orderId || orderData.orderNumber || `ORD-${Date.now().toString().slice(-6)}`;
+
+  // Save to localStorage with correct payment method for MyOrders
+  const saveToLocalStorage = () => {
+    const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+    
+    // Check if order already exists
+    const orderExists = existingOrders.some(o => o.orderId === orderId);
+    
+    if (!orderExists) {
+      const orderToSave = {
+        ...orderData,
+        orderId: orderId,
+        paymentMethod: getPaymentMethodDisplay() === "PayPal" ? "paypal" : "cash",
+        paymentStatus: isPaid() ? "paid" : "pending",
+        amount: totalAmount,
+        date: new Date().toLocaleDateString(),
+        status: "confirmed"
+      };
+      existingOrders.unshift(orderToSave);
+      localStorage.setItem("orders", JSON.stringify(existingOrders));
+      console.log("✅ Order saved to localStorage with method:", orderToSave.paymentMethod);
+    }
+  };
+
+  // Save order when component loads
+  React.useEffect(() => {
+    saveToLocalStorage();
+  }, []);
 
   return (
     <div className="payment-completed">
@@ -60,57 +121,36 @@ const PaymentCompleted = () => {
               </div>
               
               <div className="order-items-list">
-                {order?.items ? (
-                  order.items.map((item, index) => (
-                    <div className="order-item" key={index}>
-                      <div className="item-info">
-                        <span className="item-name">{item.name}</span>
-                        <span className="item-quantity">× {item.quantity}</span>
-                      </div>
-                      <span className="item-price">KES {item.price * item.quantity}</span>
+                {itemsList.map((item, index) => (
+                  <div className="order-item" key={index}>
+                    <div className="item-info">
+                      <span className="item-name">{item.name}</span>
+                      <span className="item-quantity">× {item.quantity || 1}</span>
                     </div>
-                  ))
-                ) : (
-                  // Fallback data for testing
-                  <>
-                    <div className="order-item">
-                      <div className="item-info">
-                        <span className="item-name">Dutch Oven Chicken</span>
-                        <span className="item-quantity">× 1</span>
-                      </div>
-                      <span className="item-price">KES 2005</span>
-                    </div>
-                    <div className="order-item">
-                      <div className="item-info">
-                        <span className="item-name">Chicken Marsala</span>
-                        <span className="item-quantity">× 1</span>
-                      </div>
-                      <span className="item-price">KES 1505</span>
-                    </div>
-                    <div className="order-item">
-                      <div className="item-info">
-                        <span className="item-name">Roasted Chicken</span>
-                        <span className="item-quantity">× 1</span>
-                      </div>
-                      <span className="item-price">KES 1799</span>
-                    </div>
-                  </>
-                )}
+                    <span className="item-price">KES {(item.price * (item.quantity || 1)).toLocaleString()}</span>
+                  </div>
+                ))}
               </div>
               
               <div className="order-totals">
                 <div className="total-row">
                   <span>Subtotal</span>
-                  <span>KES {totalAmount - 250}</span>
+                  <span>KES {subtotal.toLocaleString()}</span>
                 </div>
                 <div className="total-row">
                   <span>Delivery Fee</span>
-                  <span>KES 250</span>
+                  <span>KES {deliveryFee}</span>
                 </div>
+                {codFee > 0 && (
+                  <div className="total-row">
+                    <span>COD Fee</span>
+                    <span>KES {codFee}</span>
+                  </div>
+                )}
                 <div className="total-divider"></div>
                 <div className="total-row grand-total">
                   <span>Total Amount</span>
-                  <span className="total-amount">KES {totalAmount}</span>
+                  <span className="total-amount">KES {totalAmount.toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -125,28 +165,28 @@ const PaymentCompleted = () => {
               <div className="payment-details">
                 <div className="detail-row">
                   <span className="detail-label">Payment Method:</span>
-                  <span className={`detail-value payment-method ${paymentMethod || "cash"}`}>
-  {paymentMethod === "paypal" ? "PayPal" : paymentMethod === "mpesa" ? "M-Pesa" : "Cash on Delivery"}
-</span>
+                  <span className={`detail-value payment-method ${getPaymentMethodDisplay() === "PayPal" ? "paypal" : "cash"}`}>
+                    {getPaymentMethodDisplay()}
+                  </span>
                 </div>
                 
                 <div className="detail-row">
                   <span className="detail-label">Status:</span>
-                  <span className={`status-badge ${paymentMethod === "paypal" || paymentMethod === "mpesa" ? "paid" : "pending"}`}>
-  {paymentMethod === "paypal" || paymentMethod === "mpesa" ? "Paid ✓" : "Pay on Delivery"}
-</span>
+                  <span className={`status-badge ${isPaid() ? "paid" : "pending"}`}>
+                    {isPaid() ? "Paid ✓" : "Pay on Delivery"}
+                  </span>
                 </div>
                 
-                {paymentMethod === "mpesa" && order?.payment?.transactionCode && (
+                {orderData.payment?.transactionId && (
                   <div className="detail-row">
                     <span className="detail-label">Transaction ID:</span>
                     <span className="detail-value transaction-id">
-                      {order.payment.transactionCode}
+                      {orderData.payment.transactionId}
                     </span>
                   </div>
                 )}
                 
-                {paymentMethod === "cash" && (
+                {!isPaid() && (
                   <div className="cash-note">
                     <p>💵 Please have exact change ready for the delivery agent.</p>
                     <p>📝 Delivery agent will provide a receipt upon payment.</p>
@@ -205,7 +245,7 @@ const PaymentCompleted = () => {
             <div className="action-buttons">
               <button 
                 className="track-order-btn"
-                onClick={handleTrackOrder} // ✅ Now navigates to actual tracking page
+                onClick={() => navigate(`/track-order/${orderId}`)}
               >
                 <FiTruck /> Track My Order
               </button>
@@ -222,7 +262,7 @@ const PaymentCompleted = () => {
             <div className="support-info">
               <h3>Need Help?</h3>
               <div className="contact-info">
-                <p>📞 Call us: <strong>0725 280 289/ 0737146958</strong></p>
+                <p>📞 Call us: <strong>0725 280 289 / 0737 146 958</strong></p>
                 <p>✉️ Email: <strong>supportfreshfeast@gmail.com</strong></p>
                 <p className="support-note">
                   We'll send you SMS updates about your order status.

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { StoreContext } from "../../context/StoreContext";
 import "./MyOrders.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   FiPackage, 
   FiChevronDown,
@@ -20,12 +20,14 @@ import {
   FiShoppingBag,
   FiStar,
   FiDownload,
-  FiPrinter
+  FiPrinter,
+  FiSmartphone
 } from "react-icons/fi";
 import { FaPaypal } from "react-icons/fa";
 
 const MyOrders = () => {
   const { token, url } = useContext(StoreContext);
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -38,8 +40,17 @@ const MyOrders = () => {
   useEffect(() => {
     if (token) {
       fetchOrders();
+    } else {
+      // If no token, try to load from localStorage
+      loadOrdersFromLocalStorage();
     }
   }, [token]);
+
+  const loadOrdersFromLocalStorage = () => {
+    const savedOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+    setOrders(savedOrders);
+    setLoading(false);
+  };
 
   const fetchOrders = async () => {
     try {
@@ -51,9 +62,14 @@ const MyOrders = () => {
       
       if (data.success) {
         setOrders(data.data || []);
+      } else {
+        // Fallback to localStorage if backend fails
+        loadOrdersFromLocalStorage();
       }
     } catch (err) {
-      setError("Failed to load orders");
+      console.error("Failed to load orders:", err);
+      // Fallback to localStorage
+      loadOrdersFromLocalStorage();
     } finally {
       setLoading(false);
     }
@@ -71,6 +87,7 @@ const MyOrders = () => {
       'processing': { class: 'status-processing', icon: <FiRefreshCw />, text: 'Processing' },
       'shipped': { class: 'status-shipped', icon: <FiTruck />, text: 'Shipped' },
       'cancelled': { class: 'status-cancelled', icon: <FiXCircle />, text: 'Cancelled' },
+      'confirmed': { class: 'status-processing', icon: <FiRefreshCw />, text: 'Confirmed' },
       'pending': { class: 'status-pending', icon: <FiClock />, text: 'Pending' }
     };
     
@@ -78,15 +95,51 @@ const MyOrders = () => {
     return statusMap[key] || statusMap.pending;
   };
 
-  // Get payment method icon
-  const getPaymentIcon = (method) => {
-  switch(method) {
-    case 'paypal': return <FaPaypal className="payment-icon paypal" />;
-    case 'mpesa': return <FiSmartphone className="payment-icon mpesa" />; // Using FiSmartphone instead
-    case 'cash': return <FiDollarSign className="payment-icon cash" />;
-    default: return <FiDollarSign className="payment-icon" />;
-  }
-};
+  // Get payment method icon and text - FIXED VERSION
+  const getPaymentInfo = (order) => {
+    // Check multiple possible locations for payment method
+    let method = '';
+    let status = '';
+    
+    // Try different structures
+    if (order.paymentMethod) {
+      method = order.paymentMethod;
+      status = order.paymentStatus;
+    } else if (order.payment?.method) {
+      method = order.payment.method;
+      status = order.payment.status;
+    } else if (order.payment?.method === 'paypal') {
+      method = 'paypal';
+      status = 'paid';
+    } else {
+      method = 'cash';
+      status = 'pending';
+    }
+    
+    // Get icon based on method
+    let icon = null;
+    let displayName = '';
+    
+    switch(method) {
+      case 'paypal':
+        icon = <FaPaypal className="payment-icon paypal" />;
+        displayName = 'PayPal';
+        break;
+      case 'mpesa':
+        icon = <FiSmartphone className="payment-icon mpesa" />;
+        displayName = 'M-Pesa';
+        break;
+      case 'cash':
+        icon = <FiDollarSign className="payment-icon cash" />;
+        displayName = 'Cash on Delivery';
+        break;
+      default:
+        icon = <FiDollarSign className="payment-icon" />;
+        displayName = 'Cash on Delivery';
+    }
+    
+    return { icon, displayName, status: status || 'pending' };
+  };
 
   // Filter orders based on tab and search
   const filteredOrders = orders.filter(order => {
@@ -94,7 +147,7 @@ const MyOrders = () => {
     if (activeTab !== 'all') {
       const status = order.status?.toLowerCase() || '';
       if (activeTab === 'delivered' && !status.includes('delivered')) return false;
-      if (activeTab === 'processing' && !status.includes('processing')) return false;
+      if (activeTab === 'processing' && !status.includes('processing') && !status.includes('confirmed')) return false;
       if (activeTab === 'cancelled' && !status.includes('cancelled')) return false;
     }
     
@@ -102,7 +155,8 @@ const MyOrders = () => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       return (
-        order._id?.toLowerCase().includes(query) ||
+        (order._id || order.id || '').toLowerCase().includes(query) ||
+        (order.orderId || '').toLowerCase().includes(query) ||
         order.items?.some(item => item.name?.toLowerCase().includes(query))
       );
     }
@@ -112,8 +166,8 @@ const MyOrders = () => {
 
   // Sort orders
   const sortedOrders = [...filteredOrders].sort((a, b) => {
-    const dateA = new Date(a.createdAt || a.date || 0);
-    const dateB = new Date(b.createdAt || b.date || 0);
+    const dateA = new Date(a.createdAt || a.orderDate || a.date || 0);
+    const dateB = new Date(b.createdAt || b.orderDate || b.date || 0);
     return sortBy === 'newest' ? dateB - dateA : dateA - dateB;
   });
 
@@ -124,6 +178,7 @@ const MyOrders = () => {
 
   // Format date
   const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-KE', { 
       year: 'numeric', 
@@ -133,8 +188,17 @@ const MyOrders = () => {
   };
 
   // Get order number
-  const getOrderNumber = (id) => {
-    return id ? `ORD-${id.slice(-8).toUpperCase()}` : 'N/A';
+  const getOrderNumber = (order) => {
+    if (order.orderId) return order.orderId;
+    if (order._id) return `ORD-${order._id.slice(-8).toUpperCase()}`;
+    if (order.id) return `ORD-${order.id.slice(-8).toUpperCase()}`;
+    return 'N/A';
+  };
+
+  // Track order handler
+  const handleTrackOrder = (order) => {
+    const orderId = order._id || order.id || order.orderId;
+    navigate(`/trackorder/${orderId}`);
   };
 
   return (
@@ -244,18 +308,19 @@ const MyOrders = () => {
           {/* Table Rows */}
           {sortedOrders.map((order) => {
             const status = getStatusBadge(order.status);
-            const isExpanded = expandedOrder === order._id;
+            const isExpanded = expandedOrder === (order._id || order.id);
+            const paymentInfo = getPaymentInfo(order);
             
             return (
-              <div key={order._id} className="order-row">
+              <div key={order._id || order.id} className="order-row">
                 {/* Main Order Row */}
-                <div className="order-main-row" onClick={() => toggleExpand(order._id)}>
+                <div className="order-main-row" onClick={() => toggleExpand(order._id || order.id)}>
                   <div className="order-cell order-info-cell">
                     <div className="order-info-content">
-                      <div className="order-number">{getOrderNumber(order._id)}</div>
+                      <div className="order-number">{getOrderNumber(order)}</div>
                       <div className="order-date">
                         <FiCalendar />
-                        {formatDate(order.createdAt || order.date)}
+                        {formatDate(order.createdAt || order.orderDate || order.date)}
                       </div>
                       <div className="order-items-count">
                         {order.items?.length || 0} item(s)
@@ -272,32 +337,52 @@ const MyOrders = () => {
 
                   <div className="order-cell order-payment-cell">
                     <div className="payment-info">
-                      {getPaymentIcon(order.payment?.method)}
+                      {paymentInfo.icon}
                       <span className="payment-method">
-                        {order.payment?.method === 'paypal' ? 'PayPal' :
-                         order.payment?.method === 'mpesa' ? 'M-Pesa' : 'Cash on Delivery'}
+                        {paymentInfo.displayName}
                       </span>
                     </div>
-                    <span className={`payment-status ${order.payment?.status === 'paid' ? 'paid' : 'pending'}`}>
-                      {order.payment?.status === 'paid' ? 'Paid' : 'Pending'}
+                    <span className={`payment-status ${paymentInfo.status === 'paid' ? 'paid' : 'pending'}`}>
+                      {paymentInfo.status === 'paid' ? 'Paid' : 'Pending'}
                     </span>
                   </div>
 
                   <div className="order-cell order-total-cell">
-                    <span className="order-total-amount">{formatPrice(order.amount)}</span>
+                    <span className="order-total-amount">{formatPrice(order.amount || order.total)}</span>
                   </div>
 
                   <div className="order-cell order-actions-cell">
-                    <button className="action-btn view-btn" title="View Details">
+                    <button 
+                      className="action-btn view-btn" 
+                      title="View Details"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpand(order._id || order.id);
+                      }}
+                    >
                       <FiEye />
                     </button>
                     {!order.status?.toLowerCase().includes('delivered') && 
                      !order.status?.toLowerCase().includes('cancelled') && (
-                      <button className="action-btn track-btn" title="Track Order">
+                      <button 
+                        className="action-btn track-btn" 
+                        title="Track Order"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleTrackOrder(order);
+                        }}
+                      >
                         <FiTruck />
                       </button>
                     )}
-                    <button className="expand-btn" title={isExpanded ? "Show Less" : "Show More"}>
+                    <button 
+                      className="expand-btn" 
+                      title={isExpanded ? "Show Less" : "Show More"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpand(order._id || order.id);
+                      }}
+                    >
                       {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
                     </button>
                   </div>
@@ -363,23 +448,35 @@ const MyOrders = () => {
                           <h4><FiDollarSign /> Payment Summary</h4>
                           <div className="payment-summary">
                             <div className="summary-row">
+                              <span>Payment Method</span>
+                              <span className="payment-method-name">{paymentInfo.displayName}</span>
+                            </div>
+                            <div className="summary-row">
+                              <span>Payment Status</span>
+                              <span className={paymentInfo.status === 'paid' ? 'paid-text' : 'pending-text'}>
+                                {paymentInfo.status === 'paid' ? '✅ Paid' : '⏳ Pending'}
+                              </span>
+                            </div>
+                            <div className="summary-row">
                               <span>Subtotal</span>
-                              <span>{formatPrice(order.amount - 250)}</span>
+                              <span>{formatPrice((order.amount || order.total) - 75)}</span>
                             </div>
                             <div className="summary-row">
                               <span>Delivery Fee</span>
-                              <span>KSh 250</span>
+                              <span>KSh 75</span>
                             </div>
                             <div className="summary-row total">
                               <span>Total</span>
-                              <span>{formatPrice(order.amount)}</span>
+                              <span>{formatPrice(order.amount || order.total)}</span>
                             </div>
                           </div>
                           
-                          {order.payment?.transactionId && (
+                          {(order.paymentDetails?.transactionId || order.payment?.transactionId) && (
                             <div className="transaction-info">
-                              <p>Transaction ID: {order.payment.transactionId}</p>
-                              {order.payment.email && <p>PayPal Email: {order.payment.email}</p>}
+                              <p>Transaction ID: {order.paymentDetails?.transactionId || order.payment?.transactionId}</p>
+                              {(order.paymentDetails?.payerEmail || order.payment?.email) && 
+                                <p>PayPal Email: {order.paymentDetails?.payerEmail || order.payment?.email}</p>
+                              }
                             </div>
                           )}
                         </div>

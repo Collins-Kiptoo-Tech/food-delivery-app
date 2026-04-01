@@ -1,0 +1,388 @@
+.settings-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.settings-container {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid #eef2f6;
+  background: white;
+}
+
+.settings-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: #f1f5f9;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #475569;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  background: #e2e8f0;
+}
+
+/* User Info Card */
+.user-info-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, #fef3c7, #fffbeb);
+  margin: 20px;
+  border-radius: 20px;
+}
+
+.user-avatar {
+  width: 60px;
+  height: 60px;
+  background: #f59e0b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.user-details h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+}
+
+.user-details p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Message */
+.message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin: 0 20px 20px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.message.success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.message.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.settings-content {
+  padding: 0 20px 20px 20px;
+}
+
+.settings-section {
+  margin-bottom: 32px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eef2f6;
+}
+
+.section-icon {
+  font-size: 20px;
+  color: #f59e0b;
+}
+
+.section-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* Password Form */
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.form-group input {
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.save-btn {
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.save-btn:hover {
+  background: #f97316;
+}
+
+.save-btn:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+
+/* Settings List */
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  cursor: pointer;
+}
+
+.setting-info span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.setting-info p {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: 0.3s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: #f59e0b;
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+/* Theme Options */
+.theme-options {
+  display: flex;
+  gap: 12px;
+}
+
+.theme-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.theme-btn.active {
+  border-color: #f59e0b;
+  background: #fef3c7;
+  color: #f59e0b;
+}
+
+.theme-btn:hover {
+  border-color: #f59e0b;
+}
+
+/* Actions */
+.settings-actions {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #eef2f6;
+}
+
+.save-all-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 40px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background: #0f172a;
+}
+
+body.dark-mode .settings-page {
+  background: #0f172a;
+}
+
+body.dark-mode .settings-container {
+  background: #1e293b;
+}
+
+body.dark-mode .settings-header {
+  background: #1e293b;
+  border-bottom-color: #334155;
+}
+
+body.dark-mode .settings-header h1 {
+  color: #f1f5f9;
+}
+
+body.dark-mode .user-info-card {
+  background: #334155;
+}
+
+body.dark-mode .user-details h3 {
+  color: #f1f5f9;
+}
+
+body.dark-mode .section-header {
+  border-bottom-color: #334155;
+}
+
+body.dark-mode .section-header h2 {
+  color: #f1f5f9;
+}
+
+body.dark-mode .form-group input {
+  background: #334155;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+body.dark-mode .setting-info span {
+  color: #f1f5f9;
+}
+
+body.dark-mode .theme-btn {
+  background: #334155;
+  border-color: #475569;
+  color: #cbd5e1;
+}
+
+body.dark-mode .theme-btn.active {
+  background: #f59e0b;
+  color: white;
+  border-color: #f59e0b;
+}

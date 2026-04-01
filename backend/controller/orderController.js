@@ -25,14 +25,12 @@ const getUserIdFromToken = (req) => {
     }
     
     if (!token) {
-      console.log('❌ No token found');
       return null;
     }
     
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     return decoded.id;
   } catch (error) {
-    console.error("❌ Token error:", error.message);
     return null;
   }
 };
@@ -53,22 +51,23 @@ const generateToken = async () => {
 
     return response.data.access_token;
   } catch (error) {
-    console.error("❌ M-Pesa token error:", error.message);
+    console.error("M-Pesa token error:", error.message);
     throw error;
   }
 };
 
 // ----------------------------
-// Place Order - FIXED - NEVER RETURNS ERROR
+// Place Order - FIXED
 // ----------------------------
 const placeOrder = async (req, res) => {
   try {
-    console.log('\n========== PLACE ORDER ==========');
+    console.log("\n========== PLACE ORDER ==========");
     
     const userId = getUserIdFromToken(req);
+    console.log("🔍 User ID from token:", userId);
     
     if (!userId) {
-      console.log('⚠️ No userId, returning local save');
+      console.log("⚠️ No userId, returning local save");
       return res.status(200).json({ 
         success: true, 
         localSave: true,
@@ -78,8 +77,10 @@ const placeOrder = async (req, res) => {
     }
 
     const user = await userModel.findById(userId);
+    console.log("🔍 User found:", user?.email);
+    
     if (!user) {
-      console.log('⚠️ User not found');
+      console.log("⚠️ User not found");
       return res.status(200).json({ 
         success: true, 
         localSave: true,
@@ -89,10 +90,12 @@ const placeOrder = async (req, res) => {
     }
 
     const { items, amount, address, paymentMethod } = req.body;
+    console.log("📦 Items count:", items?.length);
+    console.log("💰 Amount:", amount);
+    console.log("💳 Payment Method:", paymentMethod);
 
-    // Handle missing items
     if (!items || !Array.isArray(items) || items.length === 0) {
-      console.log('⚠️ No items');
+      console.log("⚠️ No items");
       return res.status(200).json({ 
         success: true, 
         localSave: true,
@@ -101,7 +104,6 @@ const placeOrder = async (req, res) => {
       });
     }
     
-    // Process items safely - handle missing fields
     const processedItems = items.map(item => ({
       foodId: item.foodId || item._id || "unknown",
       name: item.name || "Unknown Item",
@@ -113,36 +115,64 @@ const placeOrder = async (req, res) => {
 
     const orderAmount = amount || processedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 75;
 
+    // ✅ UPDATED: Create order with all payment fields
     const newOrder = new orderModel({
       userId,
       items: processedItems,
       amount: orderAmount,
       address: address || {},
       status: "Food Processing",
+      date: new Date(),
       payment: paymentMethod === "paypal" ? true : false,
-      date: new Date()
+      paymentMethod: paymentMethod || "cash",
+      paymentStatus: paymentMethod === "paypal" ? "paid" : "pending",
+      paymentDetails: {
+        transactionId: req.body.payment?.transactionId || null,
+        email: req.body.payment?.email || null,
+        fee: paymentMethod === "cash" ? 50 : 0
+      }
     });
 
     const savedOrder = await newOrder.save();
-    console.log('✅ Order saved, ID:', savedOrder._id);
+    console.log("✅ Order saved, ID:", savedOrder._id);
+    console.log("✅ Payment Method saved:", savedOrder.paymentMethod);
+    console.log("✅ Payment Status saved:", savedOrder.paymentStatus);
 
-    // Send email if available
+    // ========== EMAIL SENDING ==========
+    console.log("\n📧 ===== EMAIL SENDING ===== ");
+    console.log("📧 savedOrder exists:", !!savedOrder);
+    console.log("📧 user?.email:", user?.email);
+    
     if (savedOrder && user?.email) {
+      console.log("📧 Attempting to send email to:", user.email);
+      console.log("📧 Order ID:", savedOrder._id);
+      console.log("📧 Order amount:", savedOrder.amount);
       try {
-        await sendOrderConfirmation(savedOrder, user.email);
-        console.log('📧 Email sent to:', user.email);
+        const emailResult = await sendOrderConfirmation(savedOrder, user.email);
+        console.log("📧 Email send result:", emailResult);
+        if (emailResult) {
+          console.log("✅ Email sent successfully!");
+        } else {
+          console.log("❌ Email sending returned false");
+        }
       } catch (emailError) {
-        console.error('❌ Email failed:', emailError.message);
+        console.error("❌ Email failed - Error:", emailError.message);
+        console.error("❌ Full error:", emailError);
       }
+    } else {
+      console.log("📧 Email NOT sent - Condition not met");
+      console.log("   - savedOrder exists:", !!savedOrder);
+      console.log("   - user?.email:", user?.email);
     }
+    console.log("📧 ===== EMAIL SENDING END =====\n");
 
     // Clear cart
     await userModel.findByIdAndUpdate(userId, { cartData: {} });
-    console.log('✅ Cart cleared');
+    console.log("✅ Cart cleared");
 
-    console.log('✅ Order placed successfully');
-    console.log('========== PLACE ORDER END ==========\n');
-    
+    console.log("✅ Order placed successfully");
+    console.log("========== PLACE ORDER END ==========\n");
+
     return res.status(200).json({ 
       success: true, 
       orderId: savedOrder._id, 
@@ -150,10 +180,9 @@ const placeOrder = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Order error:', error.message);
-    console.error('========== PLACE ORDER ERROR ==========\n');
-    
-    // ✅ ALWAYS RETURN SUCCESS - NEVER SEND ERROR TO FRONTEND
+    console.error("❌ Order error:", error.message);
+    console.error("❌ Error stack:", error.stack);
+    console.log("========== PLACE ORDER ERROR ==========\n");
     return res.status(200).json({ 
       success: true, 
       localSave: true,
@@ -168,12 +197,10 @@ const placeOrder = async (req, res) => {
 // ----------------------------
 const mpesaCallback = async (req, res) => {
   try {
-    console.log('\n========== M-PESA CALLBACK ==========');
     const { Body } = req.body;
     const { orderId } = req.query;
 
     if (!orderId) {
-      console.log('❌ No orderId');
       return res.json({ ResultCode: 0, ResultDesc: "Success" });
     }
 
@@ -182,22 +209,23 @@ const mpesaCallback = async (req, res) => {
       
       if (ResultCode === 0) {
         await orderModel.findByIdAndUpdate(orderId, { 
-          payment: true, 
+          payment: true,
+          paymentStatus: "paid",
+          "paymentDetails.status": "paid",
           status: "Processing" 
         });
-        console.log(`✅ Payment successful: ${orderId}`);
       } else {
         await orderModel.findByIdAndUpdate(orderId, { 
-          payment: false, 
+          payment: false,
+          paymentStatus: "failed",
           status: "Payment Failed" 
         });
-        console.log(`❌ Payment failed: ${orderId}`);
       }
     }
 
     res.json({ ResultCode: 0, ResultDesc: "Success" });
   } catch (error) {
-    console.error("❌ Callback error:", error.message);
+    console.error("Callback error:", error.message);
     res.json({ ResultCode: 0, ResultDesc: "Success" });
   }
 };
@@ -230,6 +258,8 @@ const userOrders = async (req, res) => {
       amount: order.amount || 0,
       status: order.status || "Food Processing",
       address: order.address || {},
+      paymentMethod: order.paymentMethod || "cash",
+      paymentStatus: order.paymentStatus || "pending",
       payment: order.payment || false,
       createdAt: order.date || new Date(),
       updatedAt: order.updatedAt || order.date || new Date()
@@ -242,7 +272,7 @@ const userOrders = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ Error fetching orders:", error);
+    console.error("Error fetching orders:", error);
     res.status(500).json({ 
       success: false, 
       message: "Failed to fetch orders"
@@ -258,7 +288,7 @@ const listOrders = async (req, res) => {
     const orders = await orderModel.find({}).sort({ date: -1 });
     res.json({ success: true, count: orders.length, data: orders });
   } catch (error) {
-    console.error("❌ List orders error:", error);
+    console.error("List orders error:", error);
     res.status(500).json({ success: false, message: "Error fetching orders" });
   }
 };
@@ -285,7 +315,7 @@ const getRestaurantOrders = async (req, res) => {
 
     res.json({ success: true, count: filteredOrders.length, data: filteredOrders });
   } catch (error) {
-    console.error("❌ Restaurant orders error:", error);
+    console.error("Restaurant orders error:", error);
     res.status(500).json({ success: false, message: "Error fetching restaurant orders" });
   }
 };
@@ -309,7 +339,7 @@ const updateStatus = async (req, res) => {
 
     res.json({ success: true, message: "Status updated", data: updatedOrder });
   } catch (error) {
-    console.error("❌ Update status error:", error);
+    console.error("Update status error:", error);
     res.status(500).json({ success: false, message: "Error updating status" });
   }
 };

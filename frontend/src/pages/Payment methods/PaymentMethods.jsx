@@ -20,58 +20,64 @@ const PaymentMethods = () => {
   const navigate = useNavigate();
   const orderData = location.state?.orderData;
 
-  console.log("📍 PaymentMethods loaded");
-  console.log("📍 orderData:", orderData);
+  console.log("🔍 PaymentMethods - Component Mounted");
+  console.log("🔍 orderData received:", orderData);
+  console.log("🔍 orderData items:", orderData?.items);
 
   const [selectedMethod, setSelectedMethod] = useState("paypal");
   const [loading, setLoading] = useState(false);
   const [paypalError, setPaypalError] = useState("");
 
-  // Calculate totals correctly from items
-  const calculateSubtotal = () => {
-    if (orderData?.items && Array.isArray(orderData.items)) {
-      return orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    }
-    return 0;
-  };
-
-  const subtotal = calculateSubtotal();
-  const deliveryFee = 75;
-  const totalAmount = subtotal + deliveryFee;
+  const totalAmount = orderData?.total || orderData?.amount || 0;
   const codFee = 50;
   const finalAmount = selectedMethod === "cash" ? totalAmount + codFee : totalAmount;
 
-  console.log("💰 Subtotal:", subtotal);
-  console.log("💰 Total Amount:", totalAmount);
-  console.log("💰 Final Amount:", finalAmount);
-
-  // Get token from localStorage
   const token = localStorage.getItem("token");
+  console.log("🔍 Token exists:", !!token);
 
-  // PayPal Client ID
   const paypalOptions = {
     "client-id": "AQ58xWEITgxA4_AdIxuo8AjogaZxr9v1jLDiuQ92ZSrhqhEv5QLZ0-GfGKPH8wJmMySaj2aTOzFHEoM1",
     currency: "USD",
     intent: "capture",
   };
 
-  // Get estimated delivery time
+  // Function to save order to backend
+  const saveOrderToBackend = async (orderDetails) => {
+    try {
+      console.log("🔴 SAVING TO BACKEND");
+      console.log("🔴 URL:", "http://localhost:4000/api/order/place");
+      console.log("🔴 Order details:", orderDetails);
+      console.log("🔴 Token being used:", token);
+      
+      const response = await axios.post(
+        "http://localhost:4000/api/order/place",
+        orderDetails,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log("✅ Backend response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ Backend save failed:", error.message);
+      console.error("❌ Error response:", error.response?.data);
+      return null;
+    }
+  };
+
   const getEstimatedDelivery = () => {
     const now = new Date();
     now.setMinutes(now.getMinutes() + 45);
     return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  // ✅ FIXED: Handle successful PayPal payment
+  // Handle successful PayPal payment
   const onApprove = async (data, actions) => {
+    console.log("🟢 onApprove CALLED - PayPal payment successful");
     try {
       setLoading(true);
       const details = await actions.order.capture();
       console.log("✅ PayPal payment captured:", details);
       
-      // Create order details with CORRECT payment method
       const orderDetails = {
-        ...orderData,
         items: orderData?.items || [],
         amount: totalAmount,
         address: orderData?.address || {},
@@ -85,38 +91,31 @@ const PaymentMethods = () => {
           transactionId: details.id,
           date: new Date().toISOString()
         },
-        orderId: `ORD-${Date.now().toString().slice(-6)}`,
+        specialInstructions: orderData?.instructions || "",
+        estimatedDelivery: getEstimatedDelivery(),
         orderNumber: `ORD-${Date.now().toString().slice(-6)}`,
-        date: new Date().toLocaleDateString(),
+        orderId: `ORD-${Date.now().toString().slice(-6)}`,
         orderDate: new Date().toISOString(),
-        status: "confirmed",
-        estimatedDelivery: getEstimatedDelivery()
+        date: new Date().toLocaleDateString(),
+        status: "confirmed"
       };
 
-      console.log("💰 PayPal Order:", orderDetails);
-      console.log("💳 Payment Method:", orderDetails.paymentMethod);
-      console.log("✅ Payment Status:", orderDetails.paymentStatus);
-
-      // Save to localStorage with correct format
+      console.log("📦 Calling saveOrderToBackend for PayPal order...");
+      await saveOrderToBackend(orderDetails);
+      
       const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
       const newOrder = {
         ...orderDetails,
         id: Date.now(),
-        orderId: orderDetails.orderId,
-        items: orderDetails.items,
-        total: totalAmount,
-        amount: totalAmount,
-        paymentMethod: "paypal",
-        paymentStatus: "paid",
-        status: "confirmed"
+        items: orderDetails.items.length,
+        total: totalAmount
       };
       
-      existingOrders.unshift(newOrder);
+      existingOrders.push(newOrder);
       localStorage.setItem("orders", JSON.stringify(existingOrders));
       localStorage.setItem(`order_${newOrder.orderId}`, JSON.stringify(newOrder));
 
-      console.log("✅ Order saved to localStorage with method:", newOrder.paymentMethod);
-
+      console.log("✅ PayPal order saved, navigating to confirmation");
       navigate("/order-confirmation", {
         state: { 
           order: newOrder, 
@@ -125,18 +124,20 @@ const PaymentMethods = () => {
         },
       });
     } catch (err) {
-      console.error("PayPal error:", err);
+      console.error("❌ PayPal error:", err);
       setPaypalError("Payment failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ FIXED: Complete Cash on Delivery order
-  const confirmCODOrder = () => {
-    console.log("🟢 confirmCODOrder called");
+  // Complete Cash on Delivery order
+  const confirmCODOrder = async () => {
+    console.log("🟢 confirmCODOrder CALLED - Cash on Delivery");
+    console.log("🟢 orderData:", orderData);
     
     if (!orderData) {
+      console.log("❌ No orderData!");
       alert("Order data missing. Please go back and try again.");
       navigate("/cart");
       return;
@@ -144,73 +145,62 @@ const PaymentMethods = () => {
 
     setLoading(true);
 
-    setTimeout(() => {
-      try {
-        const orderDetails = {
-          ...orderData,
-          items: orderData?.items || [],
-          amount: finalAmount,
-          address: orderData?.address || {},
+    try {
+      console.log("📦 Creating order details for cash order...");
+      const orderDetails = {
+        items: orderData?.items || [],
+        amount: finalAmount,
+        address: orderData?.address || {},
+        paymentMethod: "cash",
+        paymentStatus: "pending",
+        payment: {
+          method: "cash",
+          status: "pending",
+          amount: totalAmount,
+          fee: codFee,
+        },
+        specialInstructions: orderData?.instructions || "",
+        estimatedDelivery: getEstimatedDelivery(),
+        orderNumber: `COD-${Date.now().toString().slice(-6)}`,
+        orderId: `COD-${Date.now().toString().slice(-6)}`,
+        orderDate: new Date().toISOString(),
+        date: new Date().toLocaleDateString(),
+        status: "confirmed"
+      };
+
+      console.log("📦 Calling saveOrderToBackend for cash order...");
+      await saveOrderToBackend(orderDetails);
+      
+      const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+      const newOrder = {
+        ...orderDetails,
+        id: Date.now(),
+        items: orderDetails.items.length,
+        total: finalAmount,
+        codFee: codFee
+      };
+      
+      existingOrders.push(newOrder);
+      localStorage.setItem("orders", JSON.stringify(existingOrders));
+      localStorage.setItem(`order_${newOrder.orderId}`, JSON.stringify(newOrder));
+
+      console.log("✅ Cash order saved, navigating to confirmation");
+      setLoading(false);
+      
+      navigate("/order-confirmation", {
+        state: { 
+          order: newOrder, 
           paymentMethod: "cash",
-          paymentStatus: "pending",
-          payment: {
-            method: "cash",
-            status: "pending",
-            amount: totalAmount,
-            fee: codFee,
-          },
-          orderId: `COD-${Date.now().toString().slice(-6)}`,
-          orderNumber: `COD-${Date.now().toString().slice(-6)}`,
-          date: new Date().toLocaleDateString(),
-          orderDate: new Date().toISOString(),
-          status: "confirmed",
-          estimatedDelivery: getEstimatedDelivery(),
-          codFee: codFee
-        };
-
-        console.log("💰 Cash Order:", orderDetails);
-        console.log("💳 Payment Method:", orderDetails.paymentMethod);
-        console.log("⏳ Payment Status:", orderDetails.paymentStatus);
-
-        // Save to localStorage with correct format
-        const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
-        const newOrder = {
-          ...orderDetails,
-          id: Date.now(),
-          orderId: orderDetails.orderId,
-          items: orderDetails.items,
-          total: finalAmount,
-          amount: finalAmount,
-          paymentMethod: "cash",
-          paymentStatus: "pending",
-          status: "confirmed",
-          codFee: codFee
-        };
-        
-        existingOrders.unshift(newOrder);
-        localStorage.setItem("orders", JSON.stringify(existingOrders));
-        localStorage.setItem(`order_${newOrder.orderId}`, JSON.stringify(newOrder));
-
-        console.log("✅ Cash order saved to localStorage with method:", newOrder.paymentMethod);
-
-        setLoading(false);
-        
-        navigate("/order-confirmation", {
-          state: { 
-            order: newOrder, 
-            paymentMethod: "cash",
-            paymentStatus: "pending"
-          },
-        });
-      } catch (error) {
-        console.error("Order error:", error);
-        alert("Failed to confirm order. Please try again.");
-        setLoading(false);
-      }
-    }, 500);
+          paymentStatus: "pending"
+        },
+      });
+    } catch (error) {
+      console.error("❌ Order error:", error);
+      alert("Failed to confirm order. Please try again.");
+      setLoading(false);
+    }
   };
 
-  // Check if we have order data
   if (!orderData) {
     console.log("❌ No order data, redirecting to cart");
     return (
@@ -289,11 +279,11 @@ const PaymentMethods = () => {
             <div className="order-totals">
               <div className="total-row">
                 <span>Subtotal</span>
-                <span>KES {subtotal}</span>
+                <span>KES {totalAmount - 75}</span>
               </div>
               <div className="total-row">
                 <span>Delivery Fee</span>
-                <span>KES {deliveryFee}</span>
+                <span>KES 75</span>
               </div>
 
               {selectedMethod === "cash" && (
@@ -307,7 +297,7 @@ const PaymentMethods = () => {
               <div className="total-row grand-total">
                 <span>Total Amount</span>
                 <span className="total-amount">
-                  KES {selectedMethod === "cash" ? finalAmount : totalAmount}
+                  KES {finalAmount}
                 </span>
               </div>
             </div>
@@ -362,12 +352,10 @@ const PaymentMethods = () => {
                     <PayPalButtons
                       style={{ layout: "vertical", shape: "pill" }}
                       createOrder={(data, actions) => {
-                        const usdAmount = (totalAmount / 130).toFixed(2);
                         return actions.order.create({
                           purchase_units: [{
                             amount: {
-                              value: usdAmount,
-                              currency_code: "USD"
+                              value: (totalAmount / 130).toFixed(2)
                             },
                             description: "FreshFeast Food Order"
                           }]
@@ -413,19 +401,14 @@ const PaymentMethods = () => {
               )}
             </div>
 
-            {/* Cash on Delivery Button */}
             {selectedMethod === "cash" && (
               <button 
-                type="button"
                 className="pay-button" 
                 onClick={confirmCODOrder} 
                 disabled={loading}
               >
                 {loading ? (
-                  <>
-                    <span className="loading-spinner"></span>
-                    Processing...
-                  </>
+                  <span className="loading-spinner"></span>
                 ) : (
                   <>
                     Confirm Cash Order

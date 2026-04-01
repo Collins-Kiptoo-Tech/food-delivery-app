@@ -12,6 +12,8 @@ import PaymentCompleted from "./pages/PaymentCompleted/PaymentCompleted";
 import Blog from "./components/Blog/Blog.jsx";
 import PaymentMethods from "./pages/Payment methods/PaymentMethods.jsx";
 import TrackOrder from "./pages/TrackOrder/TrackOrder.jsx"; // ✅ 1. ADD THIS IMPORT
+import Settings from "./pages/Settings/Settings";
+import Support from "./pages/Support/Support";
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -51,6 +53,8 @@ const App = () => {
           <Route path="/blog" element={<Blog />} />
           {/* ✅ 4. ADD THE TRACK ORDER ROUTE WITH DYNAMIC ORDER ID */}
           <Route path="/track-order/:orderId" element={<TrackOrder />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/support" element={<Support />} />
         </Routes>
       </div>
 

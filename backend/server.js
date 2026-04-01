@@ -8,7 +8,7 @@ import cartRouter from "./routes/cartRoute.js"
 import orderRouter from "./routes/orderRoute.js"
 import adminRestaurantRouter from './routes/adminRestaurantRoute.js'
 import adminAuthRouter from './routes/adminAuthRoute.js'
-
+import supportRouter from './routes/supportRoutes.js'; 
 
 
 //app config
@@ -43,7 +43,7 @@ app.use('/api/cart',cartRouter)
 app.use('/api/order',orderRouter)
 app.use('/api/admin', adminRestaurantRouter)
 app.use('/api/admin/auth', adminAuthRouter)
-
+app.use('/api/support', supportRouter);
 
 
 
